@@ -1,0 +1,9 @@
+{
+  "shelterCount": 62761,
+  "totalPlaces": 6678979,
+  "excludedRestricted": 633,
+  "sourceRecordCount": 63394,
+  "sourceTotalPlacesIncludingRestricted": 6761875,
+  "sourceCrs": "EPSG:3006 (SWEREF99 TM)",
+  "outputCrs": "EPSG:4326 (WGS84)"
+}
