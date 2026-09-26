@@ -6,9 +6,12 @@ calm step-by-step instructions, a packing checklist, and a one-tap "I'm safe"
 message — in 7 languages (Swedish, English, Spanish, Arabic, Persian,
 Ukrainian, Somali; RTL for Arabic/Persian).
 
-If the nearest shelter is more than 15 minutes away with the chosen travel
-mode, the app tells people to take cover where they are first and shows the
-shelters only as a secondary option.
+If the nearest shelter is more than 5 minutes away with the chosen travel
+mode (about 400 m on foot), the app tells people to take cover where they are
+first and shows the shelters only as a secondary option. It also explains
+that shelters open within 48 hours of heightened alert, describes the
+beredskapslarm and flyglarm signals, and follows MCF's packing advice
+(sources: mcf.se, krisinformation.se).
 
 ## Data
 

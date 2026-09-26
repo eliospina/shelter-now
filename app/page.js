@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { LANGS, LANG_CODES, DEFAULT_LANG, UI, PACK, FAMILY_MESSAGE, offlineSteps, isRtl } from "@/lib/i18n";
-import { TRAVEL_MODES, DEFAULT_MODE, tripContext, travelMinutes, googleMapsRoute } from "@/lib/geo";
+import { TRAVEL_MODES, DEFAULT_MODE, FAR_THRESHOLD_MIN, tripContext, travelMinutes, googleMapsRoute } from "@/lib/geo";
 
 const FALLBACK_POSITION = { lat: 59.3313, lon: 18.0598 }; // Stockholm C
 const LANG_STORAGE_KEY = "shelterNowLang";
@@ -160,33 +160,12 @@ export default function Home() {
       </button>
       <p className={`small ${status === "error" ? "error" : ""}`}>{status === "error" ? errorMsg : locationNote}</p>
 
-      <div className="card">
-        <div className="cols">
-          <div className="yes">
-            <b>✓ {t.packBring}</b>
-            <ul>
-              {pack.bring.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </div>
-          <div className="no">
-            <b>✗ {t.packDontBring}</b>
-            <ul>
-              {pack.dontBring.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-
       {status === "done" && nearest && (
         <>
           {trip.far && (
             <div className="card far" role="alert">
               <b>⚠️ {t.farTitle}</b>
-              <p>{t.farBody}</p>
+              <p>{t.farBody.replace("{min}", FAR_THRESHOLD_MIN)}</p>
             </div>
           )}
 
@@ -201,6 +180,7 @@ export default function Home() {
                 {t.route} →
               </a>
             </div>
+            <p className="note">ℹ️ {t.openNote}</p>
           </div>
 
           <div className="card">
@@ -244,7 +224,58 @@ export default function Home() {
         </>
       )}
 
-      <p className="foot">{t.footer}</p>
+      {!(status === "done" && nearest) && (
+        <div className="card info">
+          <p>ℹ️ {t.openNote}</p>
+        </div>
+      )}
+
+      <div className="card">
+        <b>🔊 {t.alarmsTitle}</b>
+        <dl className="alarms">
+          {t.alarms.map((a) => (
+            <div key={a.name}>
+              <dt>{a.name}</dt>
+              <dd className="pattern">{a.pattern}</dd>
+              <dd className="action">→ {a.action}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      <div className="card">
+        <div className="cols">
+          <div className="yes">
+            <b>✓ {t.packBring}</b>
+            <ul>
+              {pack.bring.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="no">
+            <b>✗ {t.packDontBring}</b>
+            <ul>
+              {pack.dontBring.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <p className="foot">
+        {t.footer}
+        <br />
+        {t.sources}:{" "}
+        <a href="https://www.mcf.se" target="_blank" rel="noopener noreferrer">
+          mcf.se
+        </a>
+        ,{" "}
+        <a href="https://www.krisinformation.se" target="_blank" rel="noopener noreferrer">
+          krisinformation.se
+        </a>
+      </p>
     </div>
   );
 }
