@@ -1,10 +1,14 @@
 # Shelter Now
 
 Emergency shelter finder for Sweden. One button gives the 3 nearest official
-shelters (skyddsrum), the walking route, calm step-by-step instructions, a
-packing checklist, and a one-tap "I'm safe" message — in 7 languages
-(Swedish, English, Spanish, Arabic, Persian, Ukrainian, Somali; RTL for
-Arabic/Persian).
+shelters (skyddsrum), travel time and route for walking, cycling or driving,
+calm step-by-step instructions, a packing checklist, and a one-tap "I'm safe"
+message — in 7 languages (Swedish, English, Spanish, Arabic, Persian,
+Ukrainian, Somali; RTL for Arabic/Persian).
+
+If the nearest shelter is more than 15 minutes away with the chosen travel
+mode, the app tells people to take cover where they are first and shows the
+shelters only as a secondary option.
 
 ## Data
 

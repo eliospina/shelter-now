@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LANGS, LANG_CODES, DEFAULT_LANG, UI, PACK, FAMILY_MESSAGE, OFFLINE_STEPS, isRtl } from "@/lib/i18n";
-import { googleMapsWalkingRoute } from "@/lib/geo";
+import { LANGS, LANG_CODES, DEFAULT_LANG, UI, PACK, FAMILY_MESSAGE, offlineSteps, isRtl } from "@/lib/i18n";
+import { TRAVEL_MODES, DEFAULT_MODE, tripContext, travelMinutes, googleMapsRoute } from "@/lib/geo";
 
 const FALLBACK_POSITION = { lat: 59.3313, lon: 18.0598 }; // Stockholm C
 const LANG_STORAGE_KEY = "shelterNowLang";
+const MODE_ICON = { walk: "🚶", bike: "🚲", car: "🚗" };
 
 function getPosition() {
   return new Promise((resolve) => {
@@ -30,11 +31,12 @@ function getPosition() {
 
 export default function Home() {
   const [lang, setLang] = useState(DEFAULT_LANG);
+  const [mode, setMode] = useState(DEFAULT_MODE);
   const [status, setStatus] = useState("idle"); // idle | locating | done | error
   const [locationNote, setLocationNote] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [shelters, setShelters] = useState([]);
-  const [instructions, setInstructions] = useState(null); // { steps, source }
+  const [aiResult, setAiResult] = useState(null); // { key, steps }
 
   useEffect(() => {
     let saved = null;
@@ -60,10 +62,40 @@ export default function Home() {
   const pack = PACK[lang];
   const rtl = isRtl(lang);
 
+  const nearest = shelters[0];
+  const trip = nearest ? tripContext(nearest, mode) : null;
+  const requestKey = nearest ? `${lang}|${mode}|${nearest.id}` : null;
+
+  // Offline steps are shown immediately; Claude's version replaces them
+  // only once it arrives for the current language, mode and shelter.
+  const claudeSteps = aiResult && aiResult.key === requestKey ? aiResult.steps : null;
+  const steps = claudeSteps ?? (trip ? offlineSteps(lang, trip) : []);
+
+  useEffect(() => {
+    if (!nearest) return;
+    let cancelled = false;
+    fetch("/api/instructions", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        lang,
+        mode,
+        shelter: { address: nearest.address, distanceMeters: nearest.distanceMeters },
+      }),
+    })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("instructions request failed"))))
+      .then((data) => {
+        if (!cancelled && data.source === "claude") setAiResult({ key: requestKey, steps: data.steps });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [requestKey]); // eslint-disable-line react-hooks/exhaustive-deps -- requestKey encodes lang, mode and shelter
+
   async function handleEmergency() {
     setStatus("locating");
     setErrorMsg("");
-    setInstructions(null);
     setShelters([]);
 
     const pos = await getPosition();
@@ -74,37 +106,8 @@ export default function Home() {
       if (!res.ok) throw new Error("shelters request failed");
       const data = await res.json();
       if (!data.shelters?.length) throw new Error("no shelters returned");
-
       setShelters(data.shelters);
       setStatus("done");
-
-      const nearest = data.shelters[0];
-      const second = data.shelters[1];
-      const ctx = {
-        address: nearest.address,
-        distanceText: nearest.distanceText,
-        walkMinutes: nearest.walkMinutes,
-        secondAddress: second?.address ?? "",
-        secondDistanceText: second?.distanceText ?? "",
-      };
-
-      // Show offline instructions immediately, then try to upgrade to
-      // Claude-generated ones. If that request fails for any reason
-      // (API down, no key, offline), the steps already on screen stay.
-      setInstructions({ steps: OFFLINE_STEPS[lang](ctx), source: "offline" });
-
-      fetch("/api/instructions", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          lang,
-          shelter: { address: nearest.address, distanceText: nearest.distanceText, walkMinutes: nearest.walkMinutes },
-          second: second ? { address: second.address, distanceText: second.distanceText } : undefined,
-        }),
-      })
-        .then((r) => (r.ok ? r.json() : Promise.reject(new Error("instructions request failed"))))
-        .then((data) => setInstructions({ steps: data.steps, source: data.source }))
-        .catch(() => {});
     } catch {
       setStatus("error");
       setErrorMsg(t.locationError);
@@ -113,8 +116,11 @@ export default function Home() {
 
   function safeMessage(shelter) {
     const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    const routeUrl = googleMapsWalkingRoute(shelter.lat, shelter.lon);
-    return FAMILY_MESSAGE[lang](shelter.address, time, routeUrl);
+    return FAMILY_MESSAGE[lang](shelter.address, time, googleMapsRoute(shelter.lat, shelter.lon, mode));
+  }
+
+  function shelterMeta(s) {
+    return `${s.distanceText} · ${travelMinutes(s.distanceMeters, mode)} ${t.minBy[mode]} · ${s.places} ${t.places}`;
   }
 
   return (
@@ -130,6 +136,24 @@ export default function Home() {
           </option>
         ))}
       </select>
+
+      <label id="mode-label" className="mode-label">
+        {t.travelMode}
+      </label>
+      <div className="modes" role="radiogroup" aria-labelledby="mode-label">
+        {TRAVEL_MODES.map((m) => (
+          <button
+            key={m}
+            type="button"
+            role="radio"
+            aria-checked={mode === m}
+            className={`mode ${mode === m ? "active" : ""}`}
+            onClick={() => setMode(m)}
+          >
+            <span aria-hidden="true">{MODE_ICON[m]}</span> {t.modes[m]}
+          </button>
+        ))}
+      </div>
 
       <button className="sos" onClick={handleEmergency} disabled={status === "locating"}>
         {status === "locating" ? t.emergencyWorking : t.emergencyButton}
@@ -157,27 +181,32 @@ export default function Home() {
         </div>
       </div>
 
-      {status === "done" && shelters.length > 0 && (
+      {status === "done" && nearest && (
         <>
-          <div className="card first">
-            <div className="badge">{t.nearest}</div>
+          {trip.far && (
+            <div className="card far" role="alert">
+              <b>⚠️ {t.farTitle}</b>
+              <p>{t.farBody}</p>
+            </div>
+          )}
+
+          <div className={`card ${trip.far ? "secondary" : "first"}`}>
+            <div className="badge">{trip.far ? t.farNearest : t.nearest}</div>
             <div className="shelter">
               <div>
-                <b>{shelters[0].address}</b>
-                <span>
-                  {shelters[0].distanceText} · {shelters[0].walkMinutes} {t.minWalk} · {shelters[0].places} {t.places}
-                </span>
+                <b>{nearest.address}</b>
+                <span>{shelterMeta(nearest)}</span>
               </div>
-              <a className="go" href={googleMapsWalkingRoute(shelters[0].lat, shelters[0].lon)} target="_blank" rel="noopener noreferrer">
+              <a className="go" href={googleMapsRoute(nearest.lat, nearest.lon, mode)} target="_blank" rel="noopener noreferrer">
                 {t.route} →
               </a>
             </div>
           </div>
 
           <div className="card">
-            <div className="badge">{instructions?.source === "claude" ? t.aiBadge : t.offlineBadge}</div>
+            <div className="badge">{claudeSteps ? t.aiBadge : t.offlineBadge}</div>
             <ol>
-              {(instructions?.steps ?? []).map((s, i) => (
+              {steps.map((s, i) => (
                 <li key={i}>{s}</li>
               ))}
             </ol>
@@ -186,10 +215,10 @@ export default function Home() {
           <div className="card">
             <b>👨‍👩‍👧 {t.safeTitle}</b>
             <div className="btns">
-              <a className="btn2" href={`sms:?&body=${encodeURIComponent(safeMessage(shelters[0]))}`}>
+              <a className="btn2" href={`sms:?&body=${encodeURIComponent(safeMessage(nearest))}`}>
                 {t.smsButton}
               </a>
-              <a className="btn2 wa" href={`https://wa.me/?text=${encodeURIComponent(safeMessage(shelters[0]))}`} target="_blank" rel="noopener noreferrer">
+              <a className="btn2 wa" href={`https://wa.me/?text=${encodeURIComponent(safeMessage(nearest))}`} target="_blank" rel="noopener noreferrer">
                 {t.whatsappButton}
               </a>
             </div>
@@ -203,11 +232,9 @@ export default function Home() {
                 <div className="shelter" key={s.id}>
                   <div>
                     <b>{s.address}</b>
-                    <span>
-                      {s.distanceText} · {s.walkMinutes} {t.minWalk} · {s.places} {t.places}
-                    </span>
+                    <span>{shelterMeta(s)}</span>
                   </div>
-                  <a className="go" href={googleMapsWalkingRoute(s.lat, s.lon)} target="_blank" rel="noopener noreferrer">
+                  <a className="go" href={googleMapsRoute(s.lat, s.lon, mode)} target="_blank" rel="noopener noreferrer">
                     {t.route}
                   </a>
                 </div>
