@@ -42,19 +42,22 @@ places each shelter using Lantmäteriet's detailed *distrikt* boundaries
 (from the open [swemapdata](https://github.com/borstell/swemapdata) package,
 pinned to a fixed commit and checksummed). Each distrikt is labelled with the
 municipality it overlaps most, and a municipality belongs to the county whose
-code it starts with. Output: `data/shelters_by_municipality.csv` (all 290
-municipalities).
+code it starts with. Population comes from SCB's table *Folkmängden efter
+region, civilstånd, ålder och kön. År 2025* (31 Dec 2025), stored as
+`TAB5557_sv.zip`. Output: `data/shelters_by_municipality.csv` (all 290
+municipalities, with population and places per 100 inhabitants).
 
 ```bash
 pip install -r scripts/requirements.txt
 python3 scripts/shelters_by_municipality.py
 ```
 
-| Area | Shelters | Places |
-|---|---:|---:|
-| Stockholms kommun | 6,430 | 656,857 |
-| Stockholms län | 13,817 | 1,604,876 |
-| Södertälje kommun | 779 | 93,010 |
+| Area | Shelters | Places | Population (2025) | Places per 100 inhabitants |
+|---|---:|---:|---:|---:|
+| Stockholms kommun | 6,430 | 656,857 | 999,239 | 65.7 |
+| Stockholms län | 13,817 | 1,604,876 | 2,486,251 | 64.6 |
+| Södertälje kommun | 779 | 93,010 | 102,772 | 90.5 |
+| Sverige | 62,761 | 6,678,979 | 10,605,529 | 63.0 |
 
 Only 37 of Stockholms kommun's shelters lie within 100 m of its border, so
 small boundary errors change its total by under 1%.

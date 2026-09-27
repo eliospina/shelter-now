@@ -13,18 +13,27 @@ position:
      and placed in the distrikt that contains it.
   4. A municipality is in a county when its code starts with the county code.
 
-Writes data/shelters_by_municipality.csv and prints the target areas with a
-border-sensitivity check (shelters within 100 m of each area's boundary).
+Population: SCB table "Folkmängden efter region, civilstånd, ålder och kön.
+År 2025" (TAB5557, 31 Dec 2025), read from TAB5557_sv.zip in the repo root.
+Each area uses the total SCB publishes for that level (kommun, län, riket);
+SCB's levels differ by a few people, so sums of municipalities can be off by
+up to ~10 inhabitants.
+
+Writes data/shelters_by_municipality.csv and prints the target areas with
+places per inhabitant and a border-sensitivity check (shelters within 100 m
+of each area's boundary).
 
     pip install -r scripts/requirements.txt
     python3 scripts/shelters_by_municipality.py
 """
 import csv
 import hashlib
+import io
 import json
 import sys
 import urllib.request
 import warnings
+import zipfile
 from collections import defaultdict
 from pathlib import Path
 
@@ -39,6 +48,8 @@ ROOT = Path(__file__).resolve().parent.parent
 SHELTERS = ROOT / "data" / "shelters.geojson"
 OUT_CSV = ROOT / "data" / "shelters_by_municipality.csv"
 CACHE = ROOT / "data" / "raw" / "boundaries"
+SCB_ZIP = ROOT / "TAB5557_sv.zip"
+SCB_CSV = "TAB5557_sv.csv"
 
 SWEMAPDATA_COMMIT = "2dcca1da76662582ddb499d69d7b38bbb12f242c"
 BOUNDARY_FILES = {
@@ -47,12 +58,17 @@ BOUNDARY_FILES = {
     "lan": "6fbf11202d1f2c1c83472fe34c662cc3a57bf1d8076dded40bd6f0560d53054a",
 }
 
-# Areas to report: (label, predicate on 4-digit municipality code).
+# Areas to report, by SCB region code: 4 digits = kommun, 2 = län, "00" = riket.
 TARGETS = [
-    ("Stockholms kommun (0180)", lambda k: k == "0180"),
-    ("Stockholms län (01)", lambda k: k.startswith("01")),
-    ("Södertälje kommun (0181)", lambda k: k == "0181"),
+    ("Stockholms kommun", "0180"),
+    ("Stockholms län", "01"),
+    ("Södertälje kommun", "0181"),
+    ("Sverige", "00"),
 ]
+
+
+def in_area(kommun_code, area_code):
+    return area_code == "00" or kommun_code.startswith(area_code)
 
 SNAP_DISTANCE_M = 500
 BORDER_CHECK_M = 100
@@ -86,6 +102,20 @@ def load_polygons(path, key):
             polygons.append(Polygon(rings[0], rings[1:]))
         rows.append((str(code), str(name), MultiPolygon(polygons).buffer(0)))
     return rows
+
+
+def load_population():
+    """Total population per SCB region code (all ages, sexes, marital statuses)."""
+    population = {}
+    with zipfile.ZipFile(SCB_ZIP) as z, z.open(SCB_CSV) as raw:
+        for r in csv.DictReader(io.TextIOWrapper(raw, encoding="latin-1", newline="")):
+            if (r["civilstånd"] == "totalt, samtliga civilstånd"
+                    and r["ålder"] == "totalt, samtliga åldrar"
+                    and r["kön"] == "totalt, samtliga män och kvinnor"
+                    and r["tabellinnehåll"] == "Folkmängd"):
+                code = r["region"].split(" ", 1)[0]
+                population[code] = int(r["Folkmängden"])  # repeated per age grouping, same value
+    return population
 
 
 def assign_distrikt_to_kommun(distrikt, kommuner):
@@ -138,6 +168,11 @@ def main():
             unassigned += 1
     print(f"{len(shelters)} shelters: {snapped} snapped to a distrikt within {SNAP_DISTANCE_M} m, {unassigned} unassigned")
 
+    population = load_population()
+    missing = sorted(set(kommun_name) - set(population))
+    if missing:
+        sys.exit(f"No SCB population for municipality codes: {missing}")
+
     per_kommun = defaultdict(lambda: [0, 0])
     for s, k in zip(shelters, assigned):
         if k:
@@ -145,19 +180,26 @@ def main():
             per_kommun[k][1] += s["places"]
     with OUT_CSV.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["kommun_code", "kommun", "lan_code", "lan", "shelters", "places"])
+        w.writerow(["kommun_code", "kommun", "lan_code", "lan", "shelters", "places",
+                    "population_2025", "places_per_100_inhabitants"])
         for k in sorted(kommun_name):
             n, places = per_kommun.get(k, (0, 0))
-            w.writerow([k, kommun_name[k], k[:2], lan_name.get(k[:2], ""), n, places])
+            w.writerow([k, kommun_name[k], k[:2], lan_name.get(k[:2], ""), n, places,
+                        population[k], f"{100 * places / population[k]:.1f}"])
     print(f"Wrote {OUT_CSV.relative_to(ROOT)}\n")
 
-    print(f"{'Area':28} {'Shelters':>9} {'Places':>11}   Inside, within {BORDER_CHECK_M} m of border")
-    for label, pred in TARGETS:
-        idx = [i for i, k in enumerate(assigned) if k and pred(k)]
-        area = unary_union([g for c, _, g in distrikt if pred(d2k[c])])
-        near = [i for i in idx if area.boundary.distance(points[i]) <= BORDER_CHECK_M]
-        print(f"{label:28} {len(idx):>9,} {sum(shelters[i]['places'] for i in idx):>11,}   "
-              f"{len(near)} shelters, {sum(shelters[i]['places'] for i in near):,} places")
+    print(f"{'Area':20} {'Shelters':>9} {'Places':>11} {'Population':>11} {'Places/100 inh.':>16}   "
+          f"Inside, within {BORDER_CHECK_M} m of border")
+    for label, code in TARGETS:
+        idx = [i for i, k in enumerate(assigned) if k and in_area(k, code)]
+        places = sum(shelters[i]["places"] for i in idx)
+        border = ""
+        if code != "00":
+            area = unary_union([g for c, _, g in distrikt if in_area(d2k[c], code)])
+            near = [i for i in idx if area.boundary.distance(points[i]) <= BORDER_CHECK_M]
+            border = f"{len(near)} shelters, {sum(shelters[i]['places'] for i in near):,} places"
+        print(f"{label:20} {len(idx):>9,} {places:>11,} {population[code]:>11,} "
+              f"{100 * places / population[code]:>16.1f}   {border}")
 
 
 if __name__ == "__main__":
