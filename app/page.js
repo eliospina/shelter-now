@@ -77,11 +77,7 @@ export default function Home() {
     fetch("/api/instructions", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        lang,
-        mode,
-        shelter: { address: nearest.address, distanceMeters: nearest.distanceMeters },
-      }),
+      body: JSON.stringify({ lang, mode, shelterId: nearest.id, distanceMeters: nearest.distanceMeters }),
     })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error("instructions request failed"))))
       .then((data) => {

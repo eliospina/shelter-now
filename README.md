@@ -93,6 +93,23 @@ works.
 - `lib/i18n.js` — all translated strings (UI, packing list, offline steps,
   "I'm safe" message templates), shared by client and server code.
 
+## Protecting the API key
+
+`/api/instructions` is public, so it limits what a caller can make it do:
+
+- The client sends a shelter id and a distance, never free text. The server
+  looks the address up in the dataset, so the endpoint can't be used as a
+  general-purpose chatbot on your key.
+- Answers are cached for 6 hours per language, travel mode, shelter and
+  distance (rounded to 10 m), so repeat requests don't call Claude again.
+- Claude calls are limited to 10 per minute per IP and 120 per minute per
+  server instance. Over the limit, people still get the offline instructions.
+- Requests use low effort and at most 1,024 output tokens.
+
+These limits live in memory, so they apply per Vercel instance. For a hard
+ceiling on cost, also set a monthly spend limit for the key's workspace in
+the Anthropic Console.
+
 ## Deploying to Vercel
 
 ```bash

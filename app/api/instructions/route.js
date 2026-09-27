@@ -1,8 +1,23 @@
+import Anthropic from "@anthropic-ai/sdk";
 import { normalizeLang, offlineSteps, LANG_NAME_EN } from "@/lib/i18n";
-import { normalizeMode, tripContext, FAR_THRESHOLD_MIN } from "@/lib/geo";
+import { normalizeMode, tripContext, roundDistance, FAR_THRESHOLD_MIN } from "@/lib/geo";
+import { getShelterById } from "@/lib/shelters";
+import { createRateLimiter, createTtlCache, clientIp } from "@/lib/protect";
 
 const ANTHROPIC_MODEL = "claude-sonnet-5";
 const REQUEST_TIMEOUT_MS = 9000;
+const MAX_BODY_BYTES = 2048;
+const MAX_DISTANCE_M = 2_000_000;
+
+// Limits on paid Claude calls (cache hits don't count). Over a limit the
+// request still gets the offline instructions, never an error.
+const perIp = createRateLimiter({ limit: 10, windowMs: 60_000 });
+const perInstance = createRateLimiter({ limit: 120, windowMs: 60_000 });
+const answers = createTtlCache({ ttlMs: 6 * 60 * 60 * 1000, maxEntries: 2000 });
+
+const client = process.env.ANTHROPIC_API_KEY
+  ? new Anthropic({ timeout: REQUEST_TIMEOUT_MS, maxRetries: 0 })
+  : null;
 
 const MODE_PHRASE = { walk: "on foot", bike: "by bicycle", car: "by car" };
 const MODE_RULE = {
@@ -58,67 +73,74 @@ function parseNumberedSteps(text) {
   return lines.length >= 3 ? lines : null;
 }
 
+function offline(steps, reason) {
+  return Response.json({ steps, source: "offline", reason });
+}
+
 export async function POST(request) {
+  const raw = await request.text();
+  if (raw.length > MAX_BODY_BYTES) {
+    return Response.json({ error: "Request body too large" }, { status: 413 });
+  }
   let body;
   try {
-    body = await request.json();
+    body = JSON.parse(raw);
   } catch {
     return Response.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const distanceMeters = Number(body.shelter?.distanceMeters);
-  if (!Number.isFinite(distanceMeters)) {
-    return Response.json({ error: "shelter.distanceMeters is required" }, { status: 400 });
+  // Only real shelters from the dataset reach the prompt; the client sends an
+  // id, never free text, so the endpoint can't be used as a general chatbot.
+  const shelter = typeof body.shelterId === "string" ? getShelterById(body.shelterId) : null;
+  if (!shelter) {
+    return Response.json({ error: "Unknown shelterId" }, { status: 400 });
+  }
+  const distanceMeters = Number(body.distanceMeters);
+  if (!Number.isFinite(distanceMeters) || distanceMeters < 0 || distanceMeters > MAX_DISTANCE_M) {
+    return Response.json({ error: "distanceMeters must be between 0 and 2,000,000" }, { status: 400 });
   }
 
   const lang = normalizeLang(body.lang);
-  const ctx = tripContext(
-    { address: String(body.shelter?.address ?? ""), distanceMeters },
-    normalizeMode(body.mode)
-  );
-
+  const mode = normalizeMode(body.mode);
+  const ctx = tripContext({ address: shelter.address, distanceMeters }, mode);
   const fallback = offlineSteps(lang, ctx);
-  const apiKey = process.env.ANTHROPIC_API_KEY;
 
-  if (!apiKey) {
-    return Response.json({ steps: fallback, source: "offline" });
+  if (!client) return offline(fallback, "no_api_key");
+
+  const cacheKey = `${lang}|${mode}|${shelter.id}|${roundDistance(distanceMeters)}`;
+  const cached = answers.get(cacheKey);
+  if (cached) return Response.json({ steps: cached, source: "claude" });
+
+  if (!perIp(clientIp(request)) || !perInstance("all")) {
+    return offline(fallback, "rate_limited");
   }
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: ANTHROPIC_MODEL,
-        max_tokens: 500,
-        messages: [{ role: "user", content: buildPrompt(lang, ctx) }],
-      }),
-      signal: controller.signal,
+    const response = await client.messages.create({
+      model: ANTHROPIC_MODEL,
+      max_tokens: 1024,
+      output_config: { effort: "low" },
+      messages: [{ role: "user", content: buildPrompt(lang, ctx) }],
     });
-
-    if (!res.ok) {
-      return Response.json({ steps: fallback, source: "offline" });
+    if (response.stop_reason !== "end_turn") {
+      console.warn(`instructions: stop_reason ${response.stop_reason}`);
+      return offline(fallback, "unusable_response");
     }
-
-    const data = await res.json();
-    const text = data.content?.map((block) => block.text ?? "").join("\n") ?? "";
+    const text = response.content
+      .filter((block) => block.type === "text")
+      .map((block) => block.text)
+      .join("\n");
     const steps = parseNumberedSteps(text);
+    if (!steps) return offline(fallback, "unusable_response");
 
-    if (!steps) {
-      return Response.json({ steps: fallback, source: "offline" });
-    }
-
+    answers.set(cacheKey, steps);
     return Response.json({ steps, source: "claude" });
-  } catch {
-    return Response.json({ steps: fallback, source: "offline" });
-  } finally {
-    clearTimeout(timeout);
+  } catch (error) {
+    if (error instanceof Anthropic.APIError) {
+      console.error(`instructions: Anthropic API error ${error.status ?? ""} ${error.name}`);
+    } else {
+      console.error(`instructions: ${error?.name ?? "error"}`);
+    }
+    return offline(fallback, "api_error");
   }
 }
