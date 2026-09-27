@@ -35,7 +35,8 @@ const OFFICIAL_FACTS = `Official Swedish guidance (MCF and krisinformation.se). 
 - Flyglarm (many short blasts for 1 minute): take cover immediately.`;
 
 function buildPrompt(lang, ctx) {
-  const shelterLine = `Nearest shelter (skyddsrum): ${ctx.address}, ${ctx.distanceText}, about ${ctx.minutes} minutes ${MODE_PHRASE[ctx.mode]}.`;
+  const shelterLine = `Nearest shelter (skyddsrum): in a building on the property "${ctx.address}", ${ctx.distanceText}, about ${ctx.minutes} minutes ${MODE_PHRASE[ctx.mode]}.
+"${ctx.address}" is a Swedish property designation from the shelter register, not a street address. Call it the property ${ctx.address}, never present it as a street or address, and tell them to use the Route button in the app to get there.`;
 
   const steps = ctx.far
     ? `The nearest shelter is more than ${FAR_THRESHOLD_MIN} minutes away, which is too far. Taking cover where they are now is the priority. The 5 steps must cover, in this order:

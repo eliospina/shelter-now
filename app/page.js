@@ -169,6 +169,7 @@ export default function Home() {
             <div className="badge">{trip.far ? t.farNearest : t.nearest}</div>
             <div className="shelter">
               <div>
+                <span className="prop">{t.propertyLabel}</span>
                 <b>{nearest.address}</b>
                 <span>{shelterMeta(nearest)}</span>
               </div>
@@ -176,6 +177,7 @@ export default function Home() {
                 {t.route} →
               </a>
             </div>
+            <p className="note">{t.propertyHint}</p>
             <p className="note">ℹ️ {t.openNote}</p>
           </div>
 
@@ -207,6 +209,7 @@ export default function Home() {
               {shelters.slice(1).map((s) => (
                 <div className="shelter" key={s.id}>
                   <div>
+                    <span className="prop">{t.propertyLabel}</span>
                     <b>{s.address}</b>
                     <span>{shelterMeta(s)}</span>
                   </div>
