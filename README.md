@@ -50,7 +50,10 @@ municipalities, with population and places per 100 inhabitants).
 ```bash
 pip install -r scripts/requirements.txt
 python3 scripts/shelters_by_municipality.py
+python3 scripts/plot_shelters_per_municipality.py   # regenerates the chart below
 ```
+
+![Shelter places per 100 residents for all 290 Swedish municipalities, ranked. Stockholm (65.7) and Södertälje (90.5) are highlighted; the Sweden average is 63.0; 18 municipalities have no shelters.](docs/shelters-per-100-residents.png)
 
 | Area | Shelters | Places | Population (2025) | Places per 100 inhabitants |
 |---|---:|---:|---:|---:|
