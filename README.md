@@ -27,13 +27,37 @@ GeoJSON, keeping only `id`, `address`, `places`, `lat`, `lon`.
 To regenerate `data/shelters.geojson` from the raw shapefile:
 
 ```bash
-pip install pyshp pyproj
+pip install -r scripts/requirements.txt
 unzip Skyddsrum.zip -d data/raw/skyddsrum
 python3 scripts/convert_shelters.py
 ```
 
 The unzipped shapefile (`data/raw/`) is gitignored — only the processed
 GeoJSON is committed.
+
+### Shelters per municipality
+
+The data has no municipality field, so `scripts/shelters_by_municipality.py`
+places each shelter using Lantmäteriet's detailed *distrikt* boundaries
+(from the open [swemapdata](https://github.com/borstell/swemapdata) package,
+pinned to a fixed commit and checksummed). Each distrikt is labelled with the
+municipality it overlaps most, and a municipality belongs to the county whose
+code it starts with. Output: `data/shelters_by_municipality.csv` (all 290
+municipalities).
+
+```bash
+pip install -r scripts/requirements.txt
+python3 scripts/shelters_by_municipality.py
+```
+
+| Area | Shelters | Places |
+|---|---:|---:|
+| Stockholms kommun | 6,430 | 656,857 |
+| Stockholms län | 13,817 | 1,604,876 |
+| Södertälje kommun | 779 | 93,010 |
+
+Only 37 of Stockholms kommun's shelters lie within 100 m of its border, so
+small boundary errors change its total by under 1%.
 
 ## Running locally
 

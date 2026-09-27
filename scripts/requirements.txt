@@ -1,0 +1,7 @@
+# convert_shelters.py
+pyshp
+pyproj
+# shelters_by_municipality.py
+rdata
+shapely
+numpy
