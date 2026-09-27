@@ -79,20 +79,18 @@ whose code it starts with. Only 37 of Stockholms kommun's shelters lie within
 **Population.** SCB, *Folkmängden efter region, civilstånd, ålder och kön.
 År 2025* (31 December 2025), stored as `TAB5557_sv.zip`.
 
-To regenerate the data and the chart:
+## Disclaimer
 
-```bash
-pip install -r scripts/requirements.txt
-unzip Skyddsrum.zip -d data/raw/skyddsrum
-python3 scripts/convert_shelters.py                 # data/shelters.geojson
-python3 scripts/shelters_by_municipality.py         # data/shelters_by_municipality.csv
-python3 scripts/plot_shelters_per_municipality.py   # docs/shelters-per-100-residents.png
-```
+Data: Myndigheten för civilt försvar. Shelter Now is an independent project,
+not an official service. In a real emergency, follow krisinformation.se,
+Sveriges Radio P4 and 112.
 
-The unzipped shapefile (`data/raw/`) is gitignored; only the processed data
-is committed.
+## For developers
 
-## Running locally
+<details>
+<summary>Run the app, regenerate the data, and how the code is organised</summary>
+
+### Running locally
 
 ```bash
 npm install
@@ -104,7 +102,7 @@ Open http://localhost:3000. Without `ANTHROPIC_API_KEY`, the app uses the
 built-in instructions in the selected language. If location is unavailable,
 it uses Stockholm Central Station as a demo location and says so.
 
-## Code map
+### Code map
 
 - `app/page.js`: the mobile-first interface.
 - `app/api/shelters/nearest/route.js`: returns the 3 nearest shelters to a
@@ -116,7 +114,7 @@ it uses Stockholm Central Station as a demo location and says so.
 - `lib/shelters.js`: loads the shelter data on the server.
 - `lib/protect.js`: rate limits and cache for the Claude endpoint.
 
-## Protecting the API key
+### Protecting the API key
 
 `/api/instructions` is public, so it limits what a caller can make it do:
 
@@ -132,14 +130,25 @@ it uses Stockholm Central Station as a demo location and says so.
 These limits live in memory, so they apply per server instance. For a hard
 ceiling on cost, also set a monthly spend limit in the Anthropic Console.
 
-## Deploying
+### Deploying
 
 The live app runs on Vercel, connected to this repository: every push to
 `main` deploys to production. Set `ANTHROPIC_API_KEY` under the project's
 **Settings → Environment Variables**.
 
-## Disclaimer
+### Regenerating the data
 
-Data: Myndigheten för civilt försvar. Shelter Now is an independent project,
-not an official service. In a real emergency, follow krisinformation.se,
-Sveriges Radio P4 and 112.
+To regenerate the data and the chart:
+
+```bash
+pip install -r scripts/requirements.txt
+unzip Skyddsrum.zip -d data/raw/skyddsrum
+python3 scripts/convert_shelters.py                 # data/shelters.geojson
+python3 scripts/shelters_by_municipality.py         # data/shelters_by_municipality.csv
+python3 scripts/plot_shelters_per_municipality.py   # docs/shelters-per-100-residents.png
+```
+
+The unzipped shapefile (`data/raw/`) is gitignored; only the processed data
+is committed.
+
+</details>
