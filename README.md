@@ -1,5 +1,7 @@
 # Shelter Now
 
+**Live app: [shelter-now-eta.vercel.app](https://shelter-now-eta.vercel.app)** · Built at Claude Build Day Stockholm, September 2026.
+
 Emergency shelter finder for Sweden. One button gives the 3 nearest official
 shelters (skyddsrum), travel time and route for walking, cycling or driving,
 calm step-by-step instructions, a packing checklist, and a one-tap "I'm safe"
