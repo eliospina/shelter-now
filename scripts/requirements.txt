@@ -11,3 +11,4 @@ matplotlib
 pyproj
 numpy
 scipy
+truststore

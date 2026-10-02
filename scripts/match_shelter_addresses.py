@@ -37,6 +37,15 @@ import numpy as np
 from pyproj import Transformer
 from scipy.spatial import cKDTree
 
+try:
+    # Trust the same certificates as the computer's browser (the macOS Keychain),
+    # so HTTPS works behind antivirus software, VPNs or networks that inspect it.
+    import truststore
+
+    truststore.inject_into_ssl()
+except ImportError:
+    pass
+
 STAC_URL = "https://api.lantmateriet.se/stac-vektor/v1"
 SHELTERS_URL = "https://raw.githubusercontent.com/eliospina/shelter-now/main/data/shelters.geojson"
 ROOT = Path(__file__).resolve().parent.parent
@@ -65,6 +74,10 @@ class Stac:
         except urllib.error.HTTPError as error:
             if error.code in (401, 403):
                 sys.exit(f"Lantmäteriet refused the login ({error.code}) for {url}. Check your Geotorget username and password.")
+            raise
+        except urllib.error.URLError as error:
+            if "CERTIFICATE_VERIFY_FAILED" in str(error.reason):
+                sys.exit("HTTPS certificate check failed. Run: pip install truststore  (then try again)")
             raise
 
     def json(self, url):
