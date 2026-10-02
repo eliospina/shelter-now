@@ -7,3 +7,7 @@ shapely
 numpy
 # plot_shelters_per_municipality.py
 matplotlib
+# match_shelter_addresses.py (run on your own computer, see the script)
+pyproj
+numpy
+scipy
