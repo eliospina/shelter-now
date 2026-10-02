@@ -53,6 +53,7 @@ SHELTERS = ROOT / "data" / "shelters.geojson"
 RAW_DIR = ROOT / "data" / "raw" / "lantmateriet"  # gitignored, emptied after each kommun
 OUT = ROOT / "data" / "shelter_addresses.csv"
 LAYER = "belagenhetsadress"
+REQUEST_PAUSE_S = 1  # pause before every API request
 MAX_DISTANCE_M = 100  # farther than this, the shelter gets no street address
 ATTRIBUTION = "Källa: Belägenhetsadress Nedladdning, vektor, ©Lantmäteriet. Informationen har bearbetats. CC BY 4.0."
 
@@ -69,16 +70,23 @@ class Stac:
         if not url.startswith("http"):
             url = f"{self.base_url}/{url.lstrip('/')}"
         request = urllib.request.Request(url, headers=self.headers)
-        try:
-            return urllib.request.urlopen(request, timeout=120)
-        except urllib.error.HTTPError as error:
-            if error.code in (401, 403):
-                sys.exit(f"Lantmäteriet refused the login ({error.code}) for {url}. Check your Geotorget username and password.")
-            raise
-        except urllib.error.URLError as error:
-            if "CERTIFICATE_VERIFY_FAILED" in str(error.reason):
-                sys.exit("HTTPS certificate check failed. Run: pip install truststore  (then try again)")
-            raise
+        for attempt in range(8):
+            time.sleep(REQUEST_PAUSE_S)  # stay well under Lantmäteriet's rate limit
+            try:
+                return urllib.request.urlopen(request, timeout=120)
+            except urllib.error.HTTPError as error:
+                if error.code in (401, 403):
+                    sys.exit(f"Lantmäteriet refused the login ({error.code}) for {url}. Check your Geotorget username and password.")
+                if error.code not in (429, 500, 502, 503, 504) or attempt == 7:
+                    raise
+                retry_after = error.headers.get("Retry-After", "")
+                wait = int(retry_after) if retry_after.isdigit() else min(2 ** attempt * 5, 120)
+                print(f"  Lantmäteriet answered {error.code}; waiting {wait} s before trying again...")
+                time.sleep(wait)
+            except urllib.error.URLError as error:
+                if "CERTIFICATE_VERIFY_FAILED" in str(error.reason):
+                    sys.exit("HTTPS certificate check failed. Run: pip install truststore  (then try again)")
+                raise
 
     def json(self, url):
         with self.open(url) as response:
@@ -93,8 +101,16 @@ class Stac:
         wanted = [c for c in collections if "belagenhetsadress" in fold(f"{c.get('id', '')} {c.get('title', '')}")]
         return collections, wanted
 
+    def item(self, collection_id, item_id):
+        try:
+            return self.json(f"collections/{collection_id}/items/{item_id}")
+        except urllib.error.HTTPError as error:
+            if error.code == 404:
+                return None
+            raise
+
     def items(self, collection_id):
-        url = f"collections/{collection_id}/items"
+        url = f"collections/{collection_id}/items?limit=1000"
         while url:
             page = self.json(url)
             yield from page.get("features", [])
@@ -220,9 +236,16 @@ def run(stac, collection_id, only_kommun):
     files = addresses = 0
     started = time.time()
 
+    # Item ids are kommun codes, so one kommun is a single request.
+    items = stac.items(collection_id)
+    if only_kommun:
+        item = stac.item(collection_id, only_kommun)
+        if item:
+            items = [item]
+
     remove_raw()
     try:
-        for item in stac.items(collection_id):
+        for item in items:
             for _, filename, href in data_assets(item):
                 kommun = kommun_of(item, filename)
                 if only_kommun and kommun != only_kommun:
