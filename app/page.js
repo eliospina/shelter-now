@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LANGS, LANG_CODES, DEFAULT_LANG, UI, PACK, FAMILY_MESSAGE, offlineSteps, isRtl } from "@/lib/i18n";
+import { LANGS, LANG_CODES, DEFAULT_LANG, UI, PACK, FAMILY_MESSAGE, ASK, offlineSteps, isRtl } from "@/lib/i18n";
 import { TRAVEL_MODES, DEFAULT_MODE, FAR_THRESHOLD_MIN, tripContext, travelMinutes, googleMapsRoute } from "@/lib/geo";
 
 const FALLBACK_POSITION = { lat: 59.3313, lon: 18.0598 }; // Stockholm C
 const LANG_STORAGE_KEY = "shelterNowLang";
 const MODE_ICON = { walk: "🚶", bike: "🚲", car: "🚗" };
+const MAX_QUESTIONS = 5; // per page load, to keep Claude costs predictable
+const MAX_QUESTION_CHARS = 300;
 
 function getPosition() {
   return new Promise((resolve) => {
@@ -33,10 +35,12 @@ export default function Home() {
   const [lang, setLang] = useState(DEFAULT_LANG);
   const [mode, setMode] = useState(DEFAULT_MODE);
   const [status, setStatus] = useState("idle"); // idle | locating | done | error
-  const [locationNote, setLocationNote] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [locationKey, setLocationKey] = useState(null); // "usingLocation" | "demoLocation", translated on render
   const [shelters, setShelters] = useState([]);
   const [aiResult, setAiResult] = useState(null); // { key, steps }
+  const [question, setQuestion] = useState("");
+  const [asking, setAsking] = useState(false);
+  const [qa, setQa] = useState([]); // [{ question, answer, grounded }]
 
   useEffect(() => {
     let saved = null;
@@ -60,6 +64,7 @@ export default function Home() {
 
   const t = UI[lang];
   const pack = PACK[lang];
+  const ask = ASK[lang];
   const rtl = isRtl(lang);
 
   const nearest = shelters[0];
@@ -91,11 +96,10 @@ export default function Home() {
 
   async function handleEmergency() {
     setStatus("locating");
-    setErrorMsg("");
     setShelters([]);
 
     const pos = await getPosition();
-    setLocationNote(pos.isFallback ? t.demoLocation : t.usingLocation);
+    setLocationKey(pos.isFallback ? "demoLocation" : "usingLocation");
 
     try {
       const res = await fetch(`/api/shelters/nearest?lat=${pos.lat}&lon=${pos.lon}`);
@@ -106,8 +110,30 @@ export default function Home() {
       setStatus("done");
     } catch {
       setStatus("error");
-      setErrorMsg(t.locationError);
     }
+  }
+
+  async function handleAsk(e) {
+    e.preventDefault();
+    const q = question.trim().slice(0, MAX_QUESTION_CHARS);
+    if (!q || asking || !nearest || qa.length >= MAX_QUESTIONS) return;
+    setAsking(true);
+    let result;
+    try {
+      const res = await fetch("/api/ask", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ lang, mode, question: q, shelterId: nearest.id, distanceMeters: nearest.distanceMeters }),
+      });
+      if (!res.ok) throw new Error("ask request failed");
+      const data = await res.json();
+      result = { answer: data.answer, grounded: data.grounded };
+    } catch {
+      result = { answer: ask.offline, grounded: false };
+    }
+    setQa((prev) => [...prev, { question: q, ...result }]);
+    setQuestion("");
+    setAsking(false);
   }
 
   function safeMessage(shelter) {
@@ -154,7 +180,7 @@ export default function Home() {
       <button className="sos" onClick={handleEmergency} disabled={status === "locating"}>
         {status === "locating" ? t.emergencyWorking : t.emergencyButton}
       </button>
-      <p className={`small ${status === "error" ? "error" : ""}`}>{status === "error" ? errorMsg : locationNote}</p>
+      <p className={`small ${status === "error" ? "error" : ""}`}>{status === "error" ? t.locationError : locationKey ? t[locationKey] : ""}</p>
 
       {status === "done" && nearest && (
         <>
@@ -188,6 +214,35 @@ export default function Home() {
                 <li key={i}>{s}</li>
               ))}
             </ol>
+
+            <form className="ask" onSubmit={handleAsk}>
+              <label htmlFor="ask-input">{ask.title}</label>
+              {qa.map((item, i) => (
+                <div className="qa" key={i}>
+                  <p className="q" dir="auto">{item.question}</p>
+                  <p className={`a ${item.grounded ? "" : "muted"}`} dir="auto">{item.answer}</p>
+                </div>
+              ))}
+              {qa.length < MAX_QUESTIONS ? (
+                <div className="ask-row">
+                  <input
+                    id="ask-input"
+                    type="text"
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                    placeholder={ask.placeholder}
+                    maxLength={MAX_QUESTION_CHARS}
+                    disabled={asking}
+                    dir="auto"
+                  />
+                  <button type="submit" disabled={asking || !question.trim()}>
+                    {asking ? ask.thinking : ask.button}
+                  </button>
+                </div>
+              ) : (
+                <p className="note">{ask.limit}</p>
+              )}
+            </form>
           </div>
 
           <div className="card">

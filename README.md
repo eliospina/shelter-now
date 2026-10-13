@@ -56,6 +56,18 @@ The full table for all 290 municipalities is in
   chosen language, adapted to the travel mode and to whether the shelter is
   near or far. The prompt contains only official facts from MCF and
   Krisinformation, and tells Claude not to add its own rules.
+- **Follow-up questions:** below the steps, people can ask a question in their
+  own language, such as "Can I bring my dog?" (`app/api/ask/route.js`).
+  - Claude sees only the same official facts plus the context of the search:
+    language, travel mode, nearest shelter, distance and minutes.
+  - It answers in at most 3 sentences, as structured JSON
+    `{ answer, grounded }`.
+  - When the facts don't cover the question, it does not guess. The app shows
+    a fixed translated sentence: "I don't have official information on that.
+    Call 112 if it's urgent."
+  - To control cost, questions are limited to 300 characters and 5 per page
+    load, plus the same rate limits as the instructions. If the API fails, a
+    translated offline message points to krisinformation.se, P4 and 112.
 - **To build it:** the app, the translations, the data conversion and the
   municipality analysis were built in one day with Claude Code.
 
@@ -109,6 +121,9 @@ it uses Stockholm Central Station as a demo location and says so.
   position, so the full dataset is never sent to the phone.
 - `app/api/instructions/route.js`: asks Claude for the instructions and falls
   back to the built-in ones on any error.
+- `app/api/ask/route.js`: answers follow-up questions from the official facts
+  only, or returns the translated "no official information" sentence.
+- `lib/claude.js`: the shared Claude client, model and official facts.
 - `lib/i18n.js`: every translated text, including the built-in instructions.
 - `lib/geo.js`: distances, travel times, the 5-minute rule and route links.
 - `lib/shelters.js`: loads the shelter data on the server.

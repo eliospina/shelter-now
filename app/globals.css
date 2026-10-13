@@ -269,6 +269,65 @@ ol li {
   display: none;
 }
 
+.ask {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.ask-row {
+  display: flex;
+  gap: 8px;
+}
+
+.ask-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 12px;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.ask-row button {
+  padding: 11px 14px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--card);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ask-row button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.qa {
+  margin: 8px 0 12px;
+}
+
+.qa p {
+  margin: 0;
+}
+
+.qa .q {
+  font-weight: 600;
+}
+
+.qa .a {
+  margin-top: 4px;
+}
+
+.qa .a.muted {
+  color: var(--muted);
+}
+
 .foot {
   margin-top: 22px;
   font-size: 0.75rem;

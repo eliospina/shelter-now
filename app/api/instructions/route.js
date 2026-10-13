@@ -1,10 +1,9 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { normalizeLang, offlineSteps, LANG_NAME_EN } from "@/lib/i18n";
 import { normalizeMode, tripContext, roundDistance, FAR_THRESHOLD_MIN } from "@/lib/geo";
 import { getShelterById } from "@/lib/shelters";
 import { createRateLimiter, createTtlCache, clientIp } from "@/lib/protect";
+import { ANTHROPIC_MODEL, client, MODE_PHRASE, OFFICIAL_FACTS, logClaudeError } from "@/lib/claude";
 
-const ANTHROPIC_MODEL = "claude-sonnet-5";
 const REQUEST_TIMEOUT_MS = 9000;
 const MAX_BODY_BYTES = 2048;
 const MAX_DISTANCE_M = 2_000_000;
@@ -15,24 +14,11 @@ const perIp = createRateLimiter({ limit: 10, windowMs: 60_000 });
 const perInstance = createRateLimiter({ limit: 120, windowMs: 60_000 });
 const answers = createTtlCache({ ttlMs: 6 * 60 * 60 * 1000, maxEntries: 2000 });
 
-const client = process.env.ANTHROPIC_API_KEY
-  ? new Anthropic({ timeout: REQUEST_TIMEOUT_MS, maxRetries: 0 })
-  : null;
-
-const MODE_PHRASE = { walk: "on foot", bike: "by bicycle", car: "by car" };
 const MODE_RULE = {
   walk: "They are travelling on foot.",
   bike: 'They are travelling by bicycle. Never say "walk" or "walking"; describe travel as cycling.',
   car: 'They are travelling by car. Never say "walk" or "walking"; describe travel as driving.',
 };
-
-// Official guidance from MCF (mcf.se) and krisinformation.se. Claude must
-// stick to these facts rather than add its own.
-const OFFICIAL_FACTS = `Official Swedish guidance (MCF and krisinformation.se). Use only these facts; do not add other rules:
-- Shelters (skyddsrum) are opened within 48 hours after the government declares heightened alert (höjd beredskap). Before that they may be closed. If the alarm sounds before they are open, go to a basement or the middle of the building, away from windows.
-- Bring: phone, charger, water and food for 3 days, medicine, ID, hygiene products, warm clothes. Pets are not allowed in shelters.
-- Beredskapslarm (30 s signal, 15 s pause, for 5 minutes): go inside and listen to Sveriges Radio P4.
-- Flyglarm (many short blasts for 1 minute): take cover immediately.`;
 
 function buildPrompt(lang, ctx) {
   const shelterLine = `Nearest shelter (skyddsrum): in a building on the property "${ctx.address}", ${ctx.distanceText}, about ${ctx.minutes} minutes ${MODE_PHRASE[ctx.mode]}.
@@ -122,7 +108,7 @@ export async function POST(request) {
       max_tokens: 1024,
       output_config: { effort: "low" },
       messages: [{ role: "user", content: buildPrompt(lang, ctx) }],
-    });
+    }, { timeout: REQUEST_TIMEOUT_MS });
     if (response.stop_reason !== "end_turn") {
       console.warn(`instructions: stop_reason ${response.stop_reason}`);
       return offline(fallback, "unusable_response");
@@ -137,11 +123,7 @@ export async function POST(request) {
     answers.set(cacheKey, steps);
     return Response.json({ steps, source: "claude" });
   } catch (error) {
-    if (error instanceof Anthropic.APIError) {
-      console.error(`instructions: Anthropic API error ${error.status ?? ""} ${error.name}`);
-    } else {
-      console.error(`instructions: ${error?.name ?? "error"}`);
-    }
+    logClaudeError("instructions", error);
     return offline(fallback, "api_error");
   }
 }
