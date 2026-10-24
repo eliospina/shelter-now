@@ -13,19 +13,23 @@ import path from "node:path";
 
 const root = path.resolve(import.meta.dirname, "..");
 const geojsonPath = path.join(root, "data", "shelters.geojson");
+const streetsPath = path.join(root, "data", "shelter_streets.json");
 const outPath = path.join(root, "public", "shelters.json");
 const apiDir = path.join(root, "app", "api");
 const apiStash = path.join(root, ".api-stash");
 
-// Rows of [id, address, places, lat, lon]: about 3 MB instead of 11.5 MB.
-// Five decimals is about 1 m, finer than GPS.
+// Rows of [id, address, places, lat, lon, street]: a fraction of the GeoJSON.
+// Five decimals is about 1 m, finer than GPS. street is null when
+// Lantmäteriet has no address within 100 m.
 const geojson = JSON.parse(fs.readFileSync(geojsonPath, "utf-8"));
+const streets = fs.existsSync(streetsPath) ? JSON.parse(fs.readFileSync(streetsPath, "utf-8")).streets : {};
 const rows = geojson.features.map(({ properties: p }) => [
   p.id,
   p.address,
   p.places,
   Math.round(p.lat * 1e5) / 1e5,
   Math.round(p.lon * 1e5) / 1e5,
+  streets[p.id] ?? null,
 ]);
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
 fs.writeFileSync(outPath, JSON.stringify(rows));

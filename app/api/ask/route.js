@@ -36,7 +36,7 @@ ${OFFICIAL_FACTS}
 Context of this question:
 - Language: ${LANG_NAME_EN[lang]}
 - Travel mode: ${MODE_PHRASE[ctx.mode]}
-- Nearest shelter (skyddsrum): in a building on the property "${ctx.address}" (a property designation, not a street address; the Route button in the app shows the way), ${ctx.distanceText} away, about ${ctx.minutes} minutes ${MODE_PHRASE[ctx.mode]}.
+- Nearest shelter (skyddsrum): ${ctx.street ? `${ctx.street} (nearest street address; the shelter is in a building on the property "${ctx.address}")` : `in a building on the property "${ctx.address}" (a property designation, not a street address)`}; the Route button in the app shows the way. ${ctx.distanceText} away, about ${ctx.minutes} minutes ${MODE_PHRASE[ctx.mode]}.
 
 Rules:
 - Answer in ${LANG_NAME_EN[lang]}, calmly, in at most 3 short sentences.
@@ -76,7 +76,7 @@ async function handle(request) {
   }
 
   const lang = normalizeLang(body.lang);
-  const ctx = tripContext({ address: shelter.address, distanceMeters }, normalizeMode(body.mode));
+  const ctx = tripContext({ address: shelter.address, street: shelter.street, distanceMeters }, normalizeMode(body.mode));
 
   if (!client) return offline(lang, "no_api_key");
   if (!perIp(clientIp(request)) || !perInstance("all")) return offline(lang, "rate_limited");

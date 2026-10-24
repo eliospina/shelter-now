@@ -27,7 +27,8 @@ should know what to do, whatever language they speak.
 - 🔊 **The alarms explained:** *beredskapslarm* (go inside, listen to Sveriges Radio P4) and *flyglarm* (take cover immediately).
 - 📦 **What to bring and what to leave:** water and food for 3 days, medicine, ID and more. Pets are not allowed in shelters.
 - 💬 **"I'm safe" message** to family by SMS or WhatsApp, with your coordinates (they work in any map, even offline) and a link to the route. If the shelter is too far, it says you are taking cover where you are.
-- ℹ️ **Honest about the data:** shelters open within 48 hours of heightened alert, and the register names each shelter by its property designation (for example "Hägern Större 16"), not a street address. The app says both.
+- 🏠 **Street addresses:** 98.8% of shelters show the nearest street address (for example "Mäster Samuelsgatan 70, Stockholm"), matched from Lantmäteriet's address register, with the shelter register's property designation below it.
+- ℹ️ **Honest about the data:** shelters open within 48 hours of heightened alert, and the register names each shelter by its property designation (for example "Hägern Större 16"), not a street address. The app shows both.
 
 ## What the data shows
 
@@ -89,6 +90,16 @@ fixed commit and checksummed). Each distrikt is labelled with the
 municipality it overlaps most, and a municipality belongs to the county
 whose code it starts with. Only 37 of Stockholms kommun's shelters lie within
 100 m of its border, so small boundary errors change its total by under 1%.
+
+**Street addresses.** Each shelter is matched to the nearest address point in
+Lantmäteriet's *Belägenhetsadress Nedladdning, vektor* (decision LM2026/147116),
+within 100 m: 61,992 of 62,761 shelters, median distance 8 m. Lantmäteriet's
+raw files may only be stored on the applicant's own computer and are deleted
+after matching, so the matching script lives outside this repo; only the
+result, one address per shelter, is published in `data/shelter_streets.json`
+(`node scripts/import_street_addresses.mjs` to update it).
+Källa: Belägenhetsadress Nedladdning, vektor, ©Lantmäteriet. Informationen har
+bearbetats. CC BY 4.0.
 
 **Population.** SCB, *Folkmängden efter region, civilstånd, ålder och kön.
 År 2025* (31 December 2025), stored as `TAB5557_sv.zip`.
