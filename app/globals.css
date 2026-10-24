@@ -245,6 +245,11 @@ select {
   letter-spacing: 0.06em;
 }
 
+.shelter .prop-sub {
+  display: block;
+  font-size: 0.78rem;
+}
+
 .go {
   white-space: nowrap;
   background: var(--ok);

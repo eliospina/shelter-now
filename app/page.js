@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Compass from "./Compass";
-import { LANGS, LANG_CODES, DEFAULT_LANG, UI, PACK, FAMILY_MESSAGE, ASK, offlineSteps, isRtl } from "@/lib/i18n";
+import { LANGS, LANG_CODES, DEFAULT_LANG, UI, PACK, FAMILY_MESSAGE, ASK, offlineSteps, isRtl, placeName } from "@/lib/i18n";
 import { TRAVEL_MODES, DEFAULT_MODE, FAR_THRESHOLD_MIN, tripContext, travelMinutes, googleMapsRoute, nearestShelters, formatCoords } from "@/lib/geo";
 
 // The Android app has no server of its own (see scripts/build-app.mjs): it
@@ -10,6 +10,8 @@ import { TRAVEL_MODES, DEFAULT_MODE, FAR_THRESHOLD_MIN, tripContext, travelMinut
 // reaches Claude through the live site when there is internet.
 const IS_APP = process.env.NEXT_PUBLIC_TARGET === "app";
 const API_BASE = IS_APP ? "https://shelter-now-eta.vercel.app" : "";
+const STREET_ATTRIBUTION =
+  "Adresser: Belägenhetsadress Nedladdning, vektor, ©Lantmäteriet. Informationen har bearbetats. CC BY 4.0.";
 
 const DEMO_POSITION = { lat: 59.3313, lon: 18.0598 }; // Stockholm C, only with ?demo in the URL
 const LANG_STORAGE_KEY = "shelterNowLang";
@@ -42,7 +44,7 @@ let bundledShelters = null;
 function loadBundledShelters() {
   bundledShelters ??= fetch("/shelters.json")
     .then((r) => (r.ok ? r.json() : Promise.reject(new Error("shelters.json missing"))))
-    .then((rows) => rows.map(([id, address, places, lat, lon]) => ({ id, address, places, lat, lon })))
+    .then((rows) => rows.map(([id, address, places, lat, lon, street]) => ({ id, address, places, lat, lon, street })))
     .catch((error) => {
       bundledShelters = null; // let the next tap try again
       throw error;
@@ -55,6 +57,28 @@ async function findShelters(pos) {
   const res = await fetch(`/api/shelters/nearest?lat=${pos.lat}&lon=${pos.lon}`);
   if (!res.ok) throw new Error("shelters request failed");
   return (await res.json()).shelters;
+}
+
+// The street address when Lantmäteriet has one nearby, with the register's
+// property designation below it; otherwise the property designation alone.
+function ShelterName({ shelter, t }) {
+  if (!shelter.street) {
+    return (
+      <>
+        <span className="prop">{t.propertyLabel}</span>
+        <b>{shelter.address}</b>
+      </>
+    );
+  }
+  return (
+    <>
+      <span className="prop">{t.streetLabel}</span>
+      <b>{shelter.street}</b>
+      <span className="prop-sub">
+        {t.propertyLabel}: {shelter.address}
+      </span>
+    </>
+  );
 }
 
 export default function Home() {
@@ -179,7 +203,7 @@ export default function Home() {
 
   function safeMessage(shelter) {
     return FAMILY_MESSAGE[lang]({
-      address: shelter.address,
+      place: placeName(lang, shelter),
       // 24-hour "21:37", as in Sweden; "9:37 p. m." also broke the closing full stop.
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hourCycle: "h23" }),
       routeUrl: googleMapsRoute(shelter.lat, shelter.lon, mode),
@@ -242,15 +266,14 @@ export default function Home() {
             <div className="badge">{trip.far ? t.farNearest : t.nearest}</div>
             <div className="shelter">
               <div>
-                <span className="prop">{t.propertyLabel}</span>
-                <b>{nearest.address}</b>
+                <ShelterName shelter={nearest} t={t} />
                 <span>{shelterMeta(nearest)}</span>
               </div>
               <a className="go" href={googleMapsRoute(nearest.lat, nearest.lon, mode)} target="_blank" rel="noopener noreferrer">
                 {t.route} →
               </a>
             </div>
-            <p className="note">{t.propertyHint}</p>
+            <p className="note">{nearest.street ? t.streetHint : t.propertyHint}</p>
             <p className="note">ℹ️ {t.openNote}</p>
           </div>
 
@@ -313,8 +336,7 @@ export default function Home() {
               {shelters.slice(1).map((s) => (
                 <div className="shelter" key={s.id}>
                   <div>
-                    <span className="prop">{t.propertyLabel}</span>
-                    <b>{s.address}</b>
+                    <ShelterName shelter={s} t={t} />
                     <span>{shelterMeta(s)}</span>
                   </div>
                   <a className="go" href={googleMapsRoute(s.lat, s.lon, mode)} target="_blank" rel="noopener noreferrer">
@@ -378,6 +400,9 @@ export default function Home() {
         <a href="https://www.krisinformation.se" target="_blank" rel="noopener noreferrer">
           krisinformation.se
         </a>
+        <br />
+        {/* Attribution required by the CC BY 4.0 licence of the street addresses. */}
+        <span lang="sv">{STREET_ATTRIBUTION}</span>
       </p>
     </div>
   );

@@ -22,7 +22,10 @@ const MODE_RULE = {
 };
 
 function buildPrompt(lang, ctx) {
-  const shelterLine = `Nearest shelter (skyddsrum): in a building on the property "${ctx.address}", ${ctx.distanceText}, about ${ctx.minutes} minutes ${MODE_PHRASE[ctx.mode]}.
+  const shelterLine = ctx.street
+    ? `Nearest shelter (skyddsrum): ${ctx.street}, ${ctx.distanceText}, about ${ctx.minutes} minutes ${MODE_PHRASE[ctx.mode]}.
+"${ctx.street}" is the nearest street address (from Lantmäteriet); the shelter is in a building on the property "${ctx.address}". Give the street address, and tell them to use the Route button in the app to get there.`
+    : `Nearest shelter (skyddsrum): in a building on the property "${ctx.address}", ${ctx.distanceText}, about ${ctx.minutes} minutes ${MODE_PHRASE[ctx.mode]}.
 "${ctx.address}" is a Swedish property designation from the shelter register, not a street address. Call it the property ${ctx.address}, never present it as a street or address, and tell them to use the Route button in the app to get there.`;
 
   const steps = ctx.far
@@ -90,7 +93,7 @@ async function handle(request) {
 
   const lang = normalizeLang(body.lang);
   const mode = normalizeMode(body.mode);
-  const ctx = tripContext({ address: shelter.address, distanceMeters }, mode);
+  const ctx = tripContext({ address: shelter.address, street: shelter.street, distanceMeters }, mode);
   const fallback = offlineSteps(lang, ctx);
 
   if (!client) return offline(fallback, "no_api_key");
