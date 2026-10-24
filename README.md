@@ -112,7 +112,9 @@ npm run dev
 
 Open http://localhost:3000. Without `ANTHROPIC_API_KEY`, the app uses the
 built-in instructions in the selected language. If location is unavailable,
-it uses Stockholm Central Station as a demo location and says so.
+the app says so and asks you to try again; it never guesses a position. Add
+`?demo` to the URL (http://localhost:3000/?demo) to use Stockholm Central
+Station as a demo location.
 
 ### Code map
 

@@ -4,29 +4,29 @@ import { useEffect, useState } from "react";
 import { LANGS, LANG_CODES, DEFAULT_LANG, UI, PACK, FAMILY_MESSAGE, ASK, offlineSteps, isRtl } from "@/lib/i18n";
 import { TRAVEL_MODES, DEFAULT_MODE, FAR_THRESHOLD_MIN, tripContext, travelMinutes, googleMapsRoute } from "@/lib/geo";
 
-const FALLBACK_POSITION = { lat: 59.3313, lon: 18.0598 }; // Stockholm C
+const DEMO_POSITION = { lat: 59.3313, lon: 18.0598 }; // Stockholm C, only with ?demo in the URL
 const LANG_STORAGE_KEY = "shelterNowLang";
 const MODE_ICON = { walk: "🚶", bike: "🚲", car: "🚗" };
 const MAX_QUESTIONS = 5; // per page load, to keep Claude costs predictable
 const MAX_QUESTION_CHARS = 300;
+// Without internet the phone has no assisted GPS, and a first fix can take
+// up to half a minute. A fix from the last 10 minutes is good enough.
+const GPS_TIMEOUT_MS = 30_000;
+const GPS_MAX_AGE_MS = 10 * 60 * 1000;
+const GPS_SLOW_HINT_MS = 6000;
 
+// Resolves to null when there is no position. Never substitute another
+// place: a shelter near Stockholm C is the wrong shelter for anyone else.
 function getPosition() {
   return new Promise((resolve) => {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
-      resolve({ ...FALLBACK_POSITION, isFallback: true });
+      resolve(null);
       return;
     }
-    const timer = setTimeout(() => resolve({ ...FALLBACK_POSITION, isFallback: true }), 6000);
     navigator.geolocation.getCurrentPosition(
-      (p) => {
-        clearTimeout(timer);
-        resolve({ lat: p.coords.latitude, lon: p.coords.longitude, isFallback: false });
-      },
-      () => {
-        clearTimeout(timer);
-        resolve({ ...FALLBACK_POSITION, isFallback: true });
-      },
-      { enableHighAccuracy: true, timeout: 5000 }
+      (p) => resolve({ lat: p.coords.latitude, lon: p.coords.longitude }),
+      () => resolve(null),
+      { enableHighAccuracy: true, timeout: GPS_TIMEOUT_MS, maximumAge: GPS_MAX_AGE_MS }
     );
   });
 }
@@ -36,6 +36,7 @@ export default function Home() {
   const [mode, setMode] = useState(DEFAULT_MODE);
   const [status, setStatus] = useState("idle"); // idle | locating | done | error
   const [locationKey, setLocationKey] = useState(null); // "usingLocation" | "demoLocation", translated on render
+  const [gpsSlow, setGpsSlow] = useState(false);
   const [shelters, setShelters] = useState([]);
   const [aiResult, setAiResult] = useState(null); // { key, steps }
   const [question, setQuestion] = useState("");
@@ -97,9 +98,18 @@ export default function Home() {
   async function handleEmergency() {
     setStatus("locating");
     setShelters([]);
+    setLocationKey(null);
 
-    const pos = await getPosition();
-    setLocationKey(pos.isFallback ? "demoLocation" : "usingLocation");
+    const demo = new URLSearchParams(window.location.search).has("demo");
+    const slowTimer = setTimeout(() => setGpsSlow(true), GPS_SLOW_HINT_MS);
+    const pos = demo ? DEMO_POSITION : await getPosition();
+    clearTimeout(slowTimer);
+    setGpsSlow(false);
+    if (!pos) {
+      setStatus("error");
+      return;
+    }
+    setLocationKey(demo ? "demoLocation" : "usingLocation");
 
     try {
       const res = await fetch(`/api/shelters/nearest?lat=${pos.lat}&lon=${pos.lon}`);
@@ -180,7 +190,7 @@ export default function Home() {
       <button className="sos" onClick={handleEmergency} disabled={status === "locating"}>
         {status === "locating" ? t.emergencyWorking : t.emergencyButton}
       </button>
-      <p className={`small ${status === "error" ? "error" : ""}`}>{status === "error" ? t.locationError : locationKey ? t[locationKey] : ""}</p>
+      <p className={`small ${status === "error" ? "error" : ""}`}>{status === "error" ? t.locationError : gpsSlow ? t.gpsSlow : locationKey ? t[locationKey] : ""}</p>
 
       {status === "done" && nearest && (
         <>
