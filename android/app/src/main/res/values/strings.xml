@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Bunker Now</string>
+    <string name="title_activity_main">Bunker Now</string>
+    <string name="package_name">eli.bunkernow</string>
+    <string name="custom_url_scheme">eli.bunkernow</string>
+</resources>
