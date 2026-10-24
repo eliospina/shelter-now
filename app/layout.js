@@ -1,4 +1,9 @@
+import { Geist } from "next/font/google";
 import "./globals.css";
+
+// Self-hosted at build time, so the Android app has it offline. Covers
+// Swedish and Ukrainian; Arabic and Persian use the system's own fonts.
+const geist = Geist({ subsets: ["latin", "latin-ext", "cyrillic"], variable: "--font-geist" });
 
 export const metadata = {
   title: "Bunker Now",
@@ -13,7 +18,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="sv">
+    <html lang="sv" className={geist.variable}>
       <body>{children}</body>
     </html>
   );

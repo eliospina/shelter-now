@@ -59,6 +59,18 @@ async function findShelters(pos) {
   return (await res.json()).shelters;
 }
 
+// The app icon: a bunker arch with an arrow going in.
+function BrandMark() {
+  return (
+    <svg className="brand" viewBox="0 0 512 512" aria-hidden="true">
+      <rect width="512" height="512" rx="120" fill="#0b5c96" />
+      <path d="M104 400 V266 A152 152 0 0 1 408 266 V400 Z" fill="#fecc02" />
+      <path d="M176 400 V278 A80 80 0 0 1 336 278 V400 Z" fill="#0b5c96" />
+      <path d="M256 222 V334 M216 296 L256 336 L296 296" fill="none" stroke="#fdf6ec" strokeWidth="30" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 // The street address when Lantmäteriet has one nearby, with the register's
 // property designation below it; otherwise the property designation alone.
 function ShelterName({ shelter, t }) {
@@ -218,7 +230,9 @@ export default function Home() {
 
   return (
     <div className="wrap" dir={rtl ? "rtl" : "ltr"}>
-      <h1>🛡️ Bunker Now</h1>
+      <h1>
+        <BrandMark /> Bunker Now
+      </h1>
       <p className="tag">{t.tagline}</p>
 
       <label htmlFor="lang">{t.languageLabel}</label>
@@ -264,15 +278,13 @@ export default function Home() {
 
           <div className={`card ${trip.far ? "secondary" : "first"}`}>
             <div className="badge">{trip.far ? t.farNearest : t.nearest}</div>
-            <div className="shelter">
-              <div>
-                <ShelterName shelter={nearest} t={t} />
-                <span>{shelterMeta(nearest)}</span>
-              </div>
-              <a className="go" href={googleMapsRoute(nearest.lat, nearest.lon, mode)} target="_blank" rel="noopener noreferrer">
-                {t.route} →
-              </a>
+            <div className="shelter shelter-main">
+              <ShelterName shelter={nearest} t={t} />
+              <span className="meta">{shelterMeta(nearest)}</span>
             </div>
+            <a className="go go-wide" href={googleMapsRoute(nearest.lat, nearest.lon, mode)} target="_blank" rel="noopener noreferrer">
+              {t.route} →
+            </a>
             <p className="note">{nearest.street ? t.streetHint : t.propertyHint}</p>
             <p className="note">ℹ️ {t.openNote}</p>
           </div>
