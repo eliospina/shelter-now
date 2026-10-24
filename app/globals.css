@@ -452,3 +452,12 @@ ol li {
   font-weight: 700;
   font-size: 1rem;
 }
+
+.privacy h2 {
+  font-size: 1.05rem;
+  margin: 18px 0 4px;
+}
+
+.privacy a {
+  color: var(--ok);
+}
