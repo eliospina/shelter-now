@@ -1,4 +1,4 @@
-# 🛡️ Shelter Now
+# 🛡️ Bunker Now
 
 **Live app: [shelter-now-eta.vercel.app](https://shelter-now-eta.vercel.app)** · Built with Claude and Claude Code at Claude Build Day Stockholm, September 2026.
 
@@ -10,21 +10,23 @@ word *skyddsrum* and don't know what the alarms mean. In a crisis, everyone
 should know what to do, whatever language they speak.
 
 <p align="center">
-  <img src="docs/app-english.png" width="300" alt="Shelter Now in English: the nearest shelter is 150 m away, a 2 minute walk, with a Route button and five calm steps.">
+  <img src="docs/app-english.png" width="300" alt="Bunker Now in English: the nearest shelter is 150 m away, a 2 minute walk, with a Route button and five calm steps.">
   &nbsp;&nbsp;
-  <img src="docs/app-arabic-far.png" width="300" alt="Shelter Now in Arabic, right to left: the nearest shelter is 6 minutes away by car, so the app first tells people to take cover where they are.">
+  <img src="docs/app-arabic-far.png" width="300" alt="Bunker Now in Arabic, right to left: the nearest shelter is 6 minutes away by car, so the app first tells people to take cover where they are.">
 </p>
 
 ## What it does
 
 - 🔴 **One EMERGENCY button** uses your location to find the 3 nearest shelters.
+- 📴 **Works without internet (Android app):** all 62,761 shelters are inside the app and the nearest is found on the phone, with built-in instructions in every language. GPS needs no internet.
+- 🧭 **A compass to the shelter:** an arrow, the live distance and the direction ("8.9 km · north"), from GPS and the phone's compass, for when maps won't load.
 - 🚶🚲🚗 **Walking, cycling or driving:** travel time and a Google Maps route for each mode.
 - ⚠️ **Take cover first when a shelter is too far.** If the nearest shelter is more than 5 minutes away (about 400 m on foot), the app tells you to go to a basement or the middle of the building, and shows the shelter only as a second option.
-- 🧭 **Calm, numbered instructions** written by Claude in your language, limited to official MCF and Krisinformation guidance. If Claude can't answer, built-in instructions appear instead, so the button always works.
+- 📝 **Calm, numbered instructions** written by Claude in your language, limited to official MCF and Krisinformation guidance. If Claude can't answer, built-in instructions appear instead, so the button always works.
 - 🌍 **7 languages:** Swedish, English, Spanish, Arabic, Persian, Ukrainian and Somali, with right-to-left layout for Arabic and Persian.
 - 🔊 **The alarms explained:** *beredskapslarm* (go inside, listen to Sveriges Radio P4) and *flyglarm* (take cover immediately).
 - 📦 **What to bring and what to leave:** water and food for 3 days, medicine, ID and more. Pets are not allowed in shelters.
-- 💬 **"I'm safe" message** to family by SMS or WhatsApp, with a link to the route.
+- 💬 **"I'm safe" message** to family by SMS or WhatsApp, with your coordinates (they work in any map, even offline) and a link to the route. If the shelter is too far, it says you are taking cover where you are.
 - ℹ️ **Honest about the data:** shelters open within 48 hours of heightened alert, and the register names each shelter by its property designation (for example "Hägern Större 16"), not a street address. The app says both.
 
 ## What the data shows
@@ -93,7 +95,7 @@ whose code it starts with. Only 37 of Stockholms kommun's shelters lie within
 
 ## Disclaimer
 
-Data: Myndigheten för civilt försvar. Shelter Now is an independent project,
+Data: Myndigheten för civilt försvar. Bunker Now is an independent project,
 not an official service. In a real emergency, follow krisinformation.se,
 Sveriges Radio P4 and 112.
 
@@ -112,11 +114,14 @@ npm run dev
 
 Open http://localhost:3000. Without `ANTHROPIC_API_KEY`, the app uses the
 built-in instructions in the selected language. If location is unavailable,
-it uses Stockholm Central Station as a demo location and says so.
+the app says so and asks you to try again; it never guesses a position. Add
+`?demo` to the URL (http://localhost:3000/?demo) to use Stockholm Central
+Station as a demo location.
 
 ### Code map
 
 - `app/page.js`: the mobile-first interface.
+- `app/Compass.js`: the arrow to the nearest shelter (GPS and compass, no internet).
 - `app/api/shelters/nearest/route.js`: returns the 3 nearest shelters to a
   position, so the full dataset is never sent to the phone.
 - `app/api/instructions/route.js`: asks Claude for the instructions and falls
@@ -128,6 +133,8 @@ it uses Stockholm Central Station as a demo location and says so.
 - `lib/geo.js`: distances, travel times, the 5-minute rule and route links.
 - `lib/shelters.js`: loads the shelter data on the server.
 - `lib/protect.js`: rate limits and cache for the Claude endpoint.
+- `lib/cors.js`: lets the Android app call the Claude routes on the live site.
+- `scripts/build-app.mjs`: builds the static site for the Android app.
 
 ### Protecting the API key
 
@@ -150,6 +157,26 @@ ceiling on cost, also set a monthly spend limit in the Anthropic Console.
 The live app runs on Vercel, connected to this repository: every push to
 `main` deploys to production. Set `ANTHROPIC_API_KEY` under the project's
 **Settings → Environment Variables**.
+
+### Android app
+
+The Android app, **Bunker Now** (`eli.bunkernow`), is the same site packaged
+with [Capacitor](https://capacitorjs.com). It has no server of its own:
+
+- `npm run build:app` bundles the shelters as `public/shelters.json` (3.1 MB)
+  and writes a static site to `out/`, leaving out `app/api`. The phone finds
+  the nearest shelters itself, so this works in airplane mode.
+- When there is internet, the app asks for Claude's instructions and answers
+  through the live site. The API key never ships in the app.
+
+It needs Java 21 and the Android SDK (platform 36). To build and install on a
+phone connected with USB debugging:
+
+```bash
+npm run build:app && npx cap sync android
+cd android && ./gradlew assembleDebug
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+```
 
 ### Regenerating the data
 

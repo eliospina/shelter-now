@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Shelter Now",
-  description: "Emergency shelter finder for Sweden — nearest skyddsrum, route and instructions in your language.",
+  title: "Bunker Now",
+  description: "Emergency shelter finder for Sweden: nearest skyddsrum, route and instructions in your language.",
 };
 
 export const viewport = {

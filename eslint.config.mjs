@@ -10,6 +10,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Native Android project; its assets are copies of the built site.
+    "android/**",
   ]),
 ]);
 
