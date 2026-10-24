@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { LANGS, LANG_CODES, DEFAULT_LANG, UI, PACK, FAMILY_MESSAGE, ASK, offlineSteps, isRtl } from "@/lib/i18n";
-import { TRAVEL_MODES, DEFAULT_MODE, FAR_THRESHOLD_MIN, tripContext, travelMinutes, googleMapsRoute } from "@/lib/geo";
+import { TRAVEL_MODES, DEFAULT_MODE, FAR_THRESHOLD_MIN, tripContext, travelMinutes, googleMapsRoute, nearestShelters } from "@/lib/geo";
+
+// The Android app has no server of its own (see scripts/build-app.mjs): it
+// searches shelters bundled with the app, so finding one works offline, and
+// reaches Claude through the live site when there is internet.
+const IS_APP = process.env.NEXT_PUBLIC_TARGET === "app";
+const API_BASE = IS_APP ? "https://shelter-now-eta.vercel.app" : "";
 
 const DEMO_POSITION = { lat: 59.3313, lon: 18.0598 }; // Stockholm C, only with ?demo in the URL
 const LANG_STORAGE_KEY = "shelterNowLang";
@@ -31,6 +37,25 @@ function getPosition() {
   });
 }
 
+let bundledShelters = null;
+function loadBundledShelters() {
+  bundledShelters ??= fetch("/shelters.json")
+    .then((r) => (r.ok ? r.json() : Promise.reject(new Error("shelters.json missing"))))
+    .then((rows) => rows.map(([id, address, places, lat, lon]) => ({ id, address, places, lat, lon })))
+    .catch((error) => {
+      bundledShelters = null; // let the next tap try again
+      throw error;
+    });
+  return bundledShelters;
+}
+
+async function findShelters(pos) {
+  if (IS_APP) return nearestShelters(await loadBundledShelters(), pos.lat, pos.lon, 3);
+  const res = await fetch(`/api/shelters/nearest?lat=${pos.lat}&lon=${pos.lon}`);
+  if (!res.ok) throw new Error("shelters request failed");
+  return (await res.json()).shelters;
+}
+
 export default function Home() {
   const [lang, setLang] = useState(DEFAULT_LANG);
   const [mode, setMode] = useState(DEFAULT_MODE);
@@ -57,6 +82,11 @@ export default function Home() {
     if (LANG_CODES.includes(browserLang)) setLang(browserLang);
   }, []);
 
+  // Parse the bundled shelters while the user reads, so the button is instant.
+  useEffect(() => {
+    if (IS_APP) loadBundledShelters().catch(() => {});
+  }, []);
+
   useEffect(() => {
     try {
       localStorage.setItem(LANG_STORAGE_KEY, lang);
@@ -80,7 +110,7 @@ export default function Home() {
   useEffect(() => {
     if (!nearest) return;
     let cancelled = false;
-    fetch("/api/instructions", {
+    fetch(`${API_BASE}/api/instructions`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ lang, mode, shelterId: nearest.id, distanceMeters: nearest.distanceMeters }),
@@ -112,11 +142,9 @@ export default function Home() {
     setLocationKey(demo ? "demoLocation" : "usingLocation");
 
     try {
-      const res = await fetch(`/api/shelters/nearest?lat=${pos.lat}&lon=${pos.lon}`);
-      if (!res.ok) throw new Error("shelters request failed");
-      const data = await res.json();
-      if (!data.shelters?.length) throw new Error("no shelters returned");
-      setShelters(data.shelters);
+      const found = await findShelters(pos);
+      if (!found?.length) throw new Error("no shelters returned");
+      setShelters(found);
       setStatus("done");
     } catch {
       setStatus("error");
@@ -130,7 +158,7 @@ export default function Home() {
     setAsking(true);
     let result;
     try {
-      const res = await fetch("/api/ask", {
+      const res = await fetch(`${API_BASE}/api/ask`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ lang, mode, question: q, shelterId: nearest.id, distanceMeters: nearest.distanceMeters }),

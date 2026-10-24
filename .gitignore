@@ -155,3 +155,7 @@ data/raw/
 .env
 .env.local
 .env*.local
+
+# Android app build (scripts/build-app.mjs)
+public/shelters.json
+.api-stash
