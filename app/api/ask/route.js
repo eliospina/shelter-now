@@ -3,6 +3,7 @@ import { normalizeMode, tripContext } from "@/lib/geo";
 import { getShelterById } from "@/lib/shelters";
 import { createRateLimiter, clientIp } from "@/lib/protect";
 import { ANTHROPIC_MODEL, client, MODE_PHRASE, OFFICIAL_FACTS, logClaudeError } from "@/lib/claude";
+import { withCors, preflight } from "@/lib/cors";
 
 const REQUEST_TIMEOUT_MS = 10_000;
 const MAX_BODY_BYTES = 2048;
@@ -28,7 +29,7 @@ const ANSWER_FORMAT = {
 
 function buildSystem(lang, ctx) {
   const refusal = ASK[lang].refusal;
-  return `You answer follow-up questions in Shelter Now, an emergency shelter app for people in Sweden, including people who just moved there.
+  return `You answer follow-up questions in Bunker Now, an emergency shelter app for people in Sweden, including people who just moved there.
 
 ${OFFICIAL_FACTS}
 
@@ -49,7 +50,7 @@ function offline(lang, reason) {
   return Response.json({ answer: ASK[lang].offline, grounded: false, source: "offline", reason });
 }
 
-export async function POST(request) {
+async function handle(request) {
   const raw = await request.text();
   if (raw.length > MAX_BODY_BYTES) {
     return Response.json({ error: "Request body too large" }, { status: 413 });
@@ -108,4 +109,12 @@ export async function POST(request) {
     logClaudeError("ask", error);
     return offline(lang, "api_error");
   }
+}
+
+export async function POST(request) {
+  return withCors(request, await handle(request));
+}
+
+export function OPTIONS(request) {
+  return preflight(request);
 }

@@ -3,6 +3,7 @@ import { normalizeMode, tripContext, roundDistance, FAR_THRESHOLD_MIN } from "@/
 import { getShelterById } from "@/lib/shelters";
 import { createRateLimiter, createTtlCache, clientIp } from "@/lib/protect";
 import { ANTHROPIC_MODEL, client, MODE_PHRASE, OFFICIAL_FACTS, logClaudeError } from "@/lib/claude";
+import { withCors, preflight } from "@/lib/cors";
 
 const REQUEST_TIMEOUT_MS = 9000;
 const MAX_BODY_BYTES = 2048;
@@ -64,7 +65,7 @@ function offline(steps, reason) {
   return Response.json({ steps, source: "offline", reason });
 }
 
-export async function POST(request) {
+async function handle(request) {
   const raw = await request.text();
   if (raw.length > MAX_BODY_BYTES) {
     return Response.json({ error: "Request body too large" }, { status: 413 });
@@ -126,4 +127,12 @@ export async function POST(request) {
     logClaudeError("instructions", error);
     return offline(fallback, "api_error");
   }
+}
+
+export async function POST(request) {
+  return withCors(request, await handle(request));
+}
+
+export function OPTIONS(request) {
+  return preflight(request);
 }
