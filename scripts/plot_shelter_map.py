@@ -1,5 +1,5 @@
 """Draws Sweden using only its shelters: one dot per shelter, sized by its
-number of places, no borders or roads. Writes docs/sweden-drawn-by-its-shelters.png.
+number of places, with no map outline or roads. Writes docs/sweden-drawn-by-its-shelters.png.
 
     python3 scripts/plot_shelter_map.py   (needs rsvg-convert for the PNG)
 """

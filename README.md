@@ -36,8 +36,8 @@ should know what to do, whatever language they speak.
   <img src="docs/sweden-drawn-by-its-shelters.png" width="420" alt="A dark map of Sweden made only of 62,761 golden dots, one per shelter. Stockholm glows like a galaxy, Gothenburg and Malmö are smaller bright clusters, and in the north a thin string of towns follows the coast of the Gulf of Bothnia.">
 </p>
 
-**Sweden, drawn by its shelters.** No borders, no roads: one dot for each of
-the 62,761 shelters, sized by its number of places. The country appears on its
+**Sweden, drawn by its shelters.** No map outline, no roads: one dot for each
+of the 62,761 shelters, sized by its number of places. The country appears on its
 own, like a night photograph from space. Stockholm glows like a galaxy,
 Gothenburg and Malmö are smaller suns, and in the north a string of towns
 follows the coast of the Gulf of Bothnia into the dark. Every dot is a place
