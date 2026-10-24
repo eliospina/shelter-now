@@ -2,7 +2,7 @@ import { normalizeLang, offlineSteps, LANG_NAME_EN } from "@/lib/i18n";
 import { normalizeMode, tripContext, roundDistance, FAR_THRESHOLD_MIN } from "@/lib/geo";
 import { getShelterById } from "@/lib/shelters";
 import { createRateLimiter, createTtlCache, clientIp } from "@/lib/protect";
-import { ANTHROPIC_MODEL, client, MODE_PHRASE, OFFICIAL_FACTS, logClaudeError } from "@/lib/claude";
+import { ANTHROPIC_MODEL, client, MODE_PHRASE, OFFICIAL_FACTS, logClaudeError, wordingRule } from "@/lib/claude";
 import { withCors, preflight } from "@/lib/cors";
 
 const REQUEST_TIMEOUT_MS = 9000;
@@ -48,6 +48,7 @@ ${OFFICIAL_FACTS}
 
 ${shelterLine}
 ${MODE_RULE[ctx.mode]}
+${wordingRule(lang)}
 
 ${steps}
 

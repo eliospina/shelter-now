@@ -2,7 +2,7 @@ import { normalizeLang, ASK, LANG_NAME_EN } from "@/lib/i18n";
 import { normalizeMode, tripContext } from "@/lib/geo";
 import { getShelterById } from "@/lib/shelters";
 import { createRateLimiter, clientIp } from "@/lib/protect";
-import { ANTHROPIC_MODEL, client, MODE_PHRASE, OFFICIAL_FACTS, logClaudeError } from "@/lib/claude";
+import { ANTHROPIC_MODEL, client, MODE_PHRASE, OFFICIAL_FACTS, logClaudeError, wordingRule } from "@/lib/claude";
 import { withCors, preflight } from "@/lib/cors";
 
 const REQUEST_TIMEOUT_MS = 10_000;
@@ -39,7 +39,7 @@ Context of this question:
 - Nearest shelter (skyddsrum): ${ctx.street ? `${ctx.street} (nearest street address; the shelter is in a building on the property "${ctx.address}")` : `in a building on the property "${ctx.address}" (a property designation, not a street address)`}; the Route button in the app shows the way. ${ctx.distanceText} away, about ${ctx.minutes} minutes ${MODE_PHRASE[ctx.mode]}.
 
 Rules:
-- Answer in ${LANG_NAME_EN[lang]}, calmly, in at most 3 short sentences.
+- Answer in ${LANG_NAME_EN[lang]}, calmly, in at most 3 short sentences. ${wordingRule(lang)}
 - Use only the official facts and the context above. Do not add advice, numbers, places or rules that are not there.
 - If the facts and context above do not answer the question, set "grounded" to false and set "answer" to exactly: "${refusal}"
 - Otherwise set "grounded" to true.
