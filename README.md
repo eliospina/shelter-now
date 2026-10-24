@@ -32,6 +32,18 @@ should know what to do, whatever language they speak.
 
 ## What the data shows
 
+<p align="center">
+  <img src="docs/sweden-drawn-by-its-shelters.png" width="420" alt="A dark map of Sweden made only of 62,761 golden dots, one per shelter. Stockholm glows like a galaxy, Gothenburg and Malmö are smaller bright clusters, and in the north a thin string of towns follows the coast of the Gulf of Bothnia.">
+</p>
+
+**Sweden, drawn by its shelters.** No borders, no roads: one dot for each of
+the 62,761 shelters, sized by its number of places. The country appears on its
+own, like a night photograph from space. Stockholm glows like a galaxy,
+Gothenburg and Malmö are smaller suns, and in the north a string of towns
+follows the coast of the Gulf of Bothnia into the dark. Every dot is a place
+someone prepared in case it was ever needed. Seen from afar, it looks like a
+map of care.
+
 Sweden has **62,761 shelters with 6.7 million places**, about 63 for every
 100 residents. I matched every shelter to its municipality and to SCB's 2025
 population figures.
@@ -199,6 +211,7 @@ unzip Skyddsrum.zip -d data/raw/skyddsrum
 python3 scripts/convert_shelters.py                 # data/shelters.geojson
 python3 scripts/shelters_by_municipality.py         # data/shelters_by_municipality.csv
 python3 scripts/plot_shelters_per_municipality.py   # docs/shelters-per-100-residents.png
+python3 scripts/plot_shelter_map.py                 # docs/sweden-drawn-by-its-shelters.png
 ```
 
 The unzipped shapefile (`data/raw/`) is gitignored; only the processed data
