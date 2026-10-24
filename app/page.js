@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Compass from "./Compass";
 import { LANGS, LANG_CODES, DEFAULT_LANG, UI, PACK, FAMILY_MESSAGE, ASK, offlineSteps, isRtl } from "@/lib/i18n";
-import { TRAVEL_MODES, DEFAULT_MODE, FAR_THRESHOLD_MIN, tripContext, travelMinutes, googleMapsRoute, nearestShelters } from "@/lib/geo";
+import { TRAVEL_MODES, DEFAULT_MODE, FAR_THRESHOLD_MIN, tripContext, travelMinutes, googleMapsRoute, nearestShelters, formatCoords } from "@/lib/geo";
 
 // The Android app has no server of its own (see scripts/build-app.mjs): it
 // searches shelters bundled with the app, so finding one works offline, and
@@ -178,8 +178,14 @@ export default function Home() {
   }
 
   function safeMessage(shelter) {
-    const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    return FAMILY_MESSAGE[lang](shelter.address, time, googleMapsRoute(shelter.lat, shelter.lon, mode));
+    return FAMILY_MESSAGE[lang]({
+      address: shelter.address,
+      // 24-hour "21:37", as in Sweden; "9:37 p. m." also broke the closing full stop.
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hourCycle: "h23" }),
+      routeUrl: googleMapsRoute(shelter.lat, shelter.lon, mode),
+      here: formatCoords(origin.lat, origin.lon),
+      far: tripContext(shelter, mode).far,
+    });
   }
 
   function shelterMeta(s) {
