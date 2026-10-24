@@ -36,6 +36,20 @@ body {
   line-height: 1.45;
 }
 
+/* With viewport-fit=cover the page runs under the status bar (the Android
+   app is edge to edge). Cover that strip so scrolled text doesn't show
+   through the clock and battery icons. Zero height where there is no inset. */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--bg);
+  z-index: 10;
+}
+
 .wrap {
   max-width: 560px;
   margin: 0 auto;
