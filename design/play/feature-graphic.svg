@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 500">
+  <rect width="1024" height="500" fill="#0b5c96"/>
+  <g transform="translate(205 262) scale(0.78) translate(-256 -257)">
+    <path d="M104 400 V266 A152 152 0 0 1 408 266 V400 Z" fill="#fecc02"/>
+    <path d="M176 400 V278 A80 80 0 0 1 336 278 V400 Z" fill="#0b5c96"/>
+    <path d="M256 222 V334 M216 296 L256 336 L296 296" fill="none" stroke="#fdf6ec" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="410" y="230" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-weight="700" font-size="92" fill="#fdf6ec">Bunker Now</text>
+  <text x="414" y="292" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="30" fill="#fecc02">skyddsrum · shelter · refugio</text>
+  <text x="414" y="338" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="30" fill="#fecc02">укриття · hoy · ملجأ · پناهگاه</text>
+</svg>
