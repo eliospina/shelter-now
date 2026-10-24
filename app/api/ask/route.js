@@ -29,7 +29,7 @@ const ANSWER_FORMAT = {
 
 function buildSystem(lang, ctx) {
   const refusal = ASK[lang].refusal;
-  return `You answer follow-up questions in Shelter Now, an emergency shelter app for people in Sweden, including people who just moved there.
+  return `You answer follow-up questions in Bunker Now, an emergency shelter app for people in Sweden, including people who just moved there.
 
 ${OFFICIAL_FACTS}
 

@@ -194,7 +194,7 @@ export default function Home() {
 
   return (
     <div className="wrap" dir={rtl ? "rtl" : "ltr"}>
-      <h1>🛡️ Shelter Now</h1>
+      <h1>🛡️ Bunker Now</h1>
       <p className="tag">{t.tagline}</p>
 
       <label htmlFor="lang">{t.languageLabel}</label>
