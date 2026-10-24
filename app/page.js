@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Compass from "./Compass";
 import { LANGS, LANG_CODES, DEFAULT_LANG, UI, PACK, FAMILY_MESSAGE, ASK, offlineSteps, isRtl } from "@/lib/i18n";
 import { TRAVEL_MODES, DEFAULT_MODE, FAR_THRESHOLD_MIN, tripContext, travelMinutes, googleMapsRoute, nearestShelters } from "@/lib/geo";
 
@@ -63,6 +64,7 @@ export default function Home() {
   const [locationKey, setLocationKey] = useState(null); // "usingLocation" | "demoLocation", translated on render
   const [gpsSlow, setGpsSlow] = useState(false);
   const [shelters, setShelters] = useState([]);
+  const [origin, setOrigin] = useState(null); // { lat, lon, demo } the shelters were found from
   const [aiResult, setAiResult] = useState(null); // { key, steps }
   const [question, setQuestion] = useState("");
   const [asking, setAsking] = useState(false);
@@ -140,6 +142,7 @@ export default function Home() {
       return;
     }
     setLocationKey(demo ? "demoLocation" : "usingLocation");
+    setOrigin({ ...pos, demo });
 
     try {
       const found = await findShelters(pos);
@@ -244,6 +247,8 @@ export default function Home() {
             <p className="note">{t.propertyHint}</p>
             <p className="note">ℹ️ {t.openNote}</p>
           </div>
+
+          <Compass key={nearest.id} lang={lang} origin={origin} follow={!origin.demo} target={nearest} />
 
           <div className="card">
             <div className="badge">{claudeSteps ? t.aiBadge : t.offlineBadge}</div>
