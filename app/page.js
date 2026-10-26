@@ -16,6 +16,9 @@ const STREET_ATTRIBUTION =
 const DEMO_POSITION = { lat: 59.3313, lon: 18.0598 }; // Stockholm C, only with ?demo in the URL
 const LANG_STORAGE_KEY = "shelterNowLang";
 const MODE_ICON = { walk: "🚶", bike: "🚲", car: "🚗" };
+// Beyond this distance to the nearest shelter the user is outside Sweden, and
+// the app says so instead of pointing at a shelter hundreds of km away.
+const OUTSIDE_SWEDEN_METERS = 50_000;
 const MAX_QUESTIONS = 5; // per page load, to keep Claude costs predictable
 const MAX_QUESTION_CHARS = 300;
 // Without internet the phone has no assisted GPS, and a first fix can take
@@ -125,8 +128,9 @@ export default function Home() {
   const rtl = isRtl(lang);
 
   const nearest = shelters[0];
+  const outside = Boolean(nearest) && nearest.distanceMeters > OUTSIDE_SWEDEN_METERS;
   const trip = nearest ? tripContext(nearest, mode) : null;
-  const requestKey = nearest ? `${lang}|${mode}|${nearest.id}` : null;
+  const requestKey = nearest && !outside ? `${lang}|${mode}|${nearest.id}` : null;
 
   // Offline steps are shown immediately; Claude's version replaces them
   // only once it arrives for the current language, mode and shelter.
@@ -134,7 +138,7 @@ export default function Home() {
   const steps = claudeSteps ?? (trip ? offlineSteps(lang, trip) : []);
 
   useEffect(() => {
-    if (!nearest) return;
+    if (!requestKey) return;
     let cancelled = false;
     fetch(`${API_BASE}/api/instructions`, {
       method: "POST",
@@ -218,7 +222,7 @@ export default function Home() {
 
   return (
     <div className="wrap" dir={rtl ? "rtl" : "ltr"}>
-      <h1>🛡️ Bunker Now</h1>
+      <h1>🛡️ Bunker Now Sverige</h1>
       <p className="tag">{t.tagline}</p>
 
       <label htmlFor="lang">{t.languageLabel}</label>
@@ -253,7 +257,14 @@ export default function Home() {
       </button>
       <p className={`small ${status === "error" ? "error" : ""}`}>{status === "error" ? t.locationError : gpsSlow ? t.gpsSlow : locationKey ? t[locationKey] : ""}</p>
 
-      {status === "done" && nearest && (
+      {status === "done" && outside && (
+        <div className="card far" role="alert">
+          <b>⚠️ {t.outsideTitle}</b>
+          <p>{t.outsideBody}</p>
+        </div>
+      )}
+
+      {status === "done" && nearest && !outside && (
         <>
           {trip.far && (
             <div className="card far" role="alert">
@@ -403,6 +414,11 @@ export default function Home() {
         <br />
         {/* Attribution required by the CC BY 4.0 licence of the street addresses. */}
         <span lang="sv">{STREET_ATTRIBUTION}</span>
+        <br />
+        {/* Absolute in the app, so it opens the published policy in the browser. */}
+        <a href={`${API_BASE}/privacy`} target="_blank" rel="noopener noreferrer">
+          {t.privacy}
+        </a>
       </p>
     </div>
   );
