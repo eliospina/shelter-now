@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Compass from "./Compass";
+import Icon, { BrandMark } from "./icons";
 import { LANGS, LANG_CODES, DEFAULT_LANG, UI, PACK, FAMILY_MESSAGE, ASK, offlineSteps, isRtl, placeName } from "@/lib/i18n";
 import { TRAVEL_MODES, DEFAULT_MODE, FAR_THRESHOLD_MIN, tripContext, travelMinutes, googleMapsRoute, nearestShelters, formatCoords } from "@/lib/geo";
 
@@ -15,7 +16,6 @@ const STREET_ATTRIBUTION =
 
 const DEMO_POSITION = { lat: 59.3313, lon: 18.0598 }; // Stockholm C, only with ?demo in the URL
 const LANG_STORAGE_KEY = "shelterNowLang";
-const MODE_ICON = { walk: "🚶", bike: "🚲", car: "🚗" };
 // Beyond this distance to the nearest shelter the user is outside Sweden, and
 // the app says so instead of pointing at a shelter hundreds of km away.
 const OUTSIDE_SWEDEN_METERS = 50_000;
@@ -222,8 +222,13 @@ export default function Home() {
 
   return (
     <div className="wrap" dir={rtl ? "rtl" : "ltr"}>
-      <h1>🛡️ Bunker Now Sverige</h1>
-      <p className="tag">{t.tagline}</p>
+      <header className="brand">
+        <BrandMark size={46} />
+        <div>
+          <h1>Bunker Now Sverige</h1>
+          <p className="tag">{t.tagline}</p>
+        </div>
+      </header>
 
       <label htmlFor="lang">{t.languageLabel}</label>
       <select id="lang" value={lang} onChange={(e) => setLang(e.target.value)}>
@@ -247,7 +252,7 @@ export default function Home() {
             className={`mode ${mode === m ? "active" : ""}`}
             onClick={() => setMode(m)}
           >
-            <span aria-hidden="true">{MODE_ICON[m]}</span> {t.modes[m]}
+            <Icon name={m} size={20} /> {t.modes[m]}
           </button>
         ))}
       </div>
@@ -259,7 +264,9 @@ export default function Home() {
 
       {status === "done" && outside && (
         <div className="card far" role="alert">
-          <b>⚠️ {t.outsideTitle}</b>
+          <b>
+            <Icon name="alert" /> {t.outsideTitle}
+          </b>
           <p>{t.outsideBody}</p>
         </div>
       )}
@@ -268,31 +275,38 @@ export default function Home() {
         <>
           {trip.far && (
             <div className="card far" role="alert">
-              <b>⚠️ {t.farTitle}</b>
+              <b>
+                <Icon name="alert" /> {t.farTitle}
+              </b>
               <p>{t.farBody.replace("{min}", FAR_THRESHOLD_MIN)}</p>
             </div>
           )}
 
-          <div className={`card ${trip.far ? "secondary" : "first"}`}>
+          <div className={`card hero ${trip.far ? "secondary" : "first"}`}>
             <div className="badge">{trip.far ? t.farNearest : t.nearest}</div>
+            <div className="hero-stat">
+              <span className="dist">{nearest.distanceText}</span>
+              <span className="mins">
+                {travelMinutes(nearest.distanceMeters, mode)} {t.minBy[mode]} · {nearest.places} {t.places}
+              </span>
+            </div>
             <div className="shelter">
               <div>
                 <ShelterName shelter={nearest} t={t} />
-                <span>{shelterMeta(nearest)}</span>
               </div>
-              <a className="go" href={googleMapsRoute(nearest.lat, nearest.lon, mode)} target="_blank" rel="noopener noreferrer">
-                {t.route} →
-              </a>
             </div>
+            <a className="go wide" href={googleMapsRoute(nearest.lat, nearest.lon, mode)} target="_blank" rel="noopener noreferrer">
+              <Icon name="pin" size={20} /> {t.route}
+            </a>
             <p className="note">{nearest.street ? t.streetHint : t.propertyHint}</p>
-            <p className="note">ℹ️ {t.openNote}</p>
+            <p className="note">{t.openNote}</p>
           </div>
 
           <Compass key={nearest.id} lang={lang} origin={origin} follow={!origin.demo} target={nearest} />
 
           <div className="card">
             <div className="badge">{claudeSteps ? t.aiBadge : t.offlineBadge}</div>
-            <ol>
+            <ol className="steps">
               {steps.map((s, i) => (
                 <li key={i}>{s}</li>
               ))}
@@ -329,7 +343,9 @@ export default function Home() {
           </div>
 
           <div className="card">
-            <b>👨‍👩‍👧 {t.safeTitle}</b>
+            <b>
+              <Icon name="people" /> {t.safeTitle}
+            </b>
             <div className="btns">
               <a className="btn2" href={`sms:?&body=${encodeURIComponent(safeMessage(nearest))}`}>
                 {t.smsButton}
@@ -362,12 +378,15 @@ export default function Home() {
 
       {!(status === "done" && nearest) && (
         <div className="card info">
-          <p>ℹ️ {t.openNote}</p>
+          <Icon name="info" />
+          <p>{t.openNote}</p>
         </div>
       )}
 
       <div className="card">
-        <b>🔊 {t.alarmsTitle}</b>
+        <b>
+          <Icon name="sound" /> {t.alarmsTitle}
+        </b>
         <dl className="alarms">
           {t.alarms.map((a) => (
             <div key={a.name}>
@@ -382,7 +401,9 @@ export default function Home() {
       <div className="card">
         <div className="cols">
           <div className="yes">
-            <b>✓ {t.packBring}</b>
+            <b>
+              <Icon name="check" size={18} /> {t.packBring}
+            </b>
             <ul>
               {pack.bring.map((item, i) => (
                 <li key={i}>{item}</li>
@@ -390,7 +411,9 @@ export default function Home() {
             </ul>
           </div>
           <div className="no">
-            <b>✗ {t.packDontBring}</b>
+            <b>
+              <Icon name="cross" size={18} /> {t.packDontBring}
+            </b>
             <ul>
               {pack.dontBring.map((item, i) => (
                 <li key={i}>{item}</li>
