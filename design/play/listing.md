@@ -11,7 +11,7 @@ Bunker Now: närmaste skyddsrum
 Närmaste skyddsrum och vad du ska göra, på ditt språk. Fungerar utan internet.
 
 ### Full description
-Bunker Now visar med ett tryck närmaste av Sveriges 62 761 skyddsrum, hur du tar dig dit och vad du ska göra, på ditt språk.
+Bunker Now visar med ett tryck närmaste av Sveriges 62 739 skyddsrum, hur du tar dig dit och vad du ska göra, på ditt språk.
 
 Omkring 2 miljoner människor i Sverige är födda utomlands. Många har aldrig hört ordet skyddsrum och vet inte vad larmen betyder. I en kris ska alla veta vad de ska göra, vilket språk de än talar.
 
@@ -46,7 +46,7 @@ Bunker Now: nearest shelter
 Nearest shelter in Sweden and what to do, in your language. Works offline.
 
 ### Full description
-Bunker Now shows the nearest of Sweden's 62,761 public shelters (skyddsrum) with one tap, how to get there and what to do, in your language.
+Bunker Now shows the nearest of Sweden's 62,739 public shelters (skyddsrum) with one tap, how to get there and what to do, in your language.
 
 Around 2 million people in Sweden were born abroad. Many have never heard the word skyddsrum and don't know what the alarms mean. In a crisis, everyone should know what to do, whatever language they speak.
 

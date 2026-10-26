@@ -7,7 +7,7 @@ kommun_code,kommun,lan_code,lan,shelters,places,population_2025,places_per_100_i
 0125,Ekerö,01,Stockholms län,31,4096,29062,14.1
 0126,Huddinge,01,Stockholms län,588,80128,114686,69.9
 0127,Botkyrka,01,Stockholms län,471,71798,96750,74.2
-0128,Salem,01,Stockholms län,60,7953,17370,45.8
+0128,Salem,01,Stockholms län,59,7711,17370,44.4
 0136,Haninge,01,Stockholms län,534,69094,101408,68.1
 0138,Tyresö,01,Stockholms län,233,28656,49645,57.7
 0139,Upplands-Bro,01,Stockholms län,52,8866,33333,26.6
@@ -15,7 +15,7 @@ kommun_code,kommun,lan_code,lan,shelters,places,population_2025,places_per_100_i
 0160,Täby,01,Stockholms län,362,47734,78514,60.8
 0162,Danderyd,01,Stockholms län,201,26818,32500,82.5
 0163,Sollentuna,01,Stockholms län,410,51615,78033,66.1
-0180,Stockholm,01,Stockholms län,6430,656857,999239,65.7
+0180,Stockholm,01,Stockholms län,6427,656415,999239,65.7
 0181,Södertälje,01,Stockholms län,779,93010,102772,90.5
 0182,Nacka,01,Stockholms län,498,65005,113730,57.2
 0183,Sundbyberg,01,Stockholms län,290,40079,57000,70.3
@@ -26,11 +26,11 @@ kommun_code,kommun,lan_code,lan,shelters,places,population_2025,places_per_100_i
 0191,Sigtuna,01,Stockholms län,264,36439,53365,68.3
 0192,Nynäshamn,01,Stockholms län,155,15336,30610,50.1
 0305,Håbo,03,Uppsala län,34,5408,23252,23.3
-0319,Älvkarleby,03,Uppsala län,42,4609,9573,48.1
+0319,Älvkarleby,03,Uppsala län,40,4309,9573,45.0
 0330,Knivsta,03,Uppsala län,1,124,21733,0.6
 0331,Heby,03,Uppsala län,7,401,14275,2.8
 0360,Tierp,03,Uppsala län,70,7199,21028,34.2
-0380,Uppsala,03,Uppsala län,1268,157144,249726,62.9
+0380,Uppsala,03,Uppsala län,1267,157024,249726,62.9
 0381,Enköping,03,Uppsala län,209,23329,48804,47.8
 0382,Östhammar,03,Uppsala län,34,3543,22181,16.0
 0428,Vingåker,04,Södermanlands län,12,767,8666,8.9
@@ -62,7 +62,7 @@ kommun_code,kommun,lan_code,lan,shelters,places,population_2025,places_per_100_i
 0662,Gislaved,06,Jönköpings län,77,9762,28641,34.1
 0665,Vaggeryd,06,Jönköpings län,7,539,14943,3.6
 0680,Jönköping,06,Jönköpings län,811,85412,148152,57.7
-0682,Nässjö,06,Jönköpings län,197,21098,31474,67.0
+0682,Nässjö,06,Jönköpings län,196,21032,31474,66.8
 0683,Värnamo,06,Jönköpings län,190,20524,34534,59.4
 0684,Sävsjö,06,Jönköpings län,14,969,11531,8.4
 0685,Vetlanda,06,Jönköpings län,125,12141,27313,44.5
@@ -83,7 +83,7 @@ kommun_code,kommun,lan_code,lan,shelters,places,population_2025,places_per_100_i
 0861,Mönsterås,08,Kalmar län,13,772,12978,5.9
 0862,Emmaboda,08,Kalmar län,29,2430,8807,27.6
 0880,Kalmar,08,Kalmar län,546,59701,73068,81.7
-0881,Nybro,08,Kalmar län,151,15549,19803,78.5
+0881,Nybro,08,Kalmar län,152,15642,19803,79.0
 0882,Oskarshamn,08,Kalmar län,234,23566,26762,88.1
 0883,Västervik,08,Kalmar län,231,24603,36269,67.8
 0884,Vimmerby,08,Kalmar län,106,10065,15327,65.7
@@ -163,20 +163,20 @@ kommun_code,kommun,lan_code,lan,shelters,places,population_2025,places_per_100_i
 1471,Götene,14,Västra Götalands län,6,396,13223,3.0
 1472,Tibro,14,Västra Götalands län,68,7583,11326,67.0
 1473,Töreboda,14,Västra Götalands län,58,5389,9093,59.3
-1480,Göteborg,14,Västra Götalands län,4786,519968,613278,84.8
+1480,Göteborg,14,Västra Götalands län,4785,519907,613278,84.8
 1481,Mölndal,14,Västra Götalands län,530,58100,72128,80.6
 1482,Kungälv,14,Västra Götalands län,184,22771,50496,45.1
-1484,Lysekil,14,Västra Götalands län,67,7973,13796,57.8
+1484,Lysekil,14,Västra Götalands län,66,7881,13796,57.1
 1485,Uddevalla,14,Västra Götalands län,373,42981,56744,75.7
-1486,Strömstad,14,Västra Götalands län,63,6159,13557,45.4
+1486,Strömstad,14,Västra Götalands län,62,5938,13557,43.8
 1487,Vänersborg,14,Västra Götalands län,237,24373,40078,60.8
 1488,Trollhättan,14,Västra Götalands län,468,51376,59265,86.7
 1489,Alingsås,14,Västra Götalands län,190,21795,42861,50.9
-1490,Borås,14,Västra Götalands län,818,79496,115238,69.0
+1490,Borås,14,Västra Götalands län,821,80037,115238,69.5
 1491,Ulricehamn,14,Västra Götalands län,112,8436,24954,33.8
 1492,Åmål,14,Västra Götalands län,100,10074,11679,86.3
-1493,Mariestad,14,Västra Götalands län,217,24198,24421,99.1
-1494,Lidköping,14,Västra Götalands län,261,27306,40359,67.7
+1493,Mariestad,14,Västra Götalands län,216,24136,24421,98.8
+1494,Lidköping,14,Västra Götalands län,260,27256,40359,67.5
 1495,Skara,14,Västra Götalands län,147,14271,18753,76.1
 1496,Skövde,14,Västra Götalands län,463,52009,58272,89.3
 1497,Hjo,14,Västra Götalands län,10,539,9322,5.8
@@ -186,13 +186,13 @@ kommun_code,kommun,lan_code,lan,shelters,places,population_2025,places_per_100_i
 1730,Eda,17,Värmlands län,20,1807,8289,21.8
 1737,Torsby,17,Värmlands län,1,100,11278,0.9
 1760,Storfors,17,Värmlands län,20,1387,3777,36.7
-1761,Hammarö,17,Värmlands län,70,7226,16932,42.7
+1761,Hammarö,17,Värmlands län,69,7104,16932,42.0
 1762,Munkfors,17,Värmlands län,21,1917,3637,52.7
 1763,Forshaga,17,Värmlands län,24,1891,11439,16.5
 1764,Grums,17,Värmlands län,43,4914,8854,55.5
 1765,Årjäng,17,Värmlands län,2,84,9734,0.9
 1766,Sunne,17,Värmlands län,9,478,13354,3.6
-1780,Karlstad,17,Värmlands län,691,77871,99007,78.7
+1780,Karlstad,17,Värmlands län,688,77341,99007,78.1
 1781,Kristinehamn,17,Värmlands län,223,22461,23590,95.2
 1782,Filipstad,17,Värmlands län,113,9422,9625,97.9
 1783,Hagfors,17,Värmlands län,73,8361,11324,73.8
@@ -204,10 +204,10 @@ kommun_code,kommun,lan_code,lan,shelters,places,population_2025,places_per_100_i
 1862,Degerfors,18,Örebro län,89,7214,9237,78.1
 1863,Hällefors,18,Örebro län,50,4737,6269,75.6
 1864,Ljusnarsberg,18,Örebro län,34,3046,4290,71.0
-1880,Örebro,18,Örebro län,882,98262,160687,61.2
+1880,Örebro,18,Örebro län,880,98053,160687,61.0
 1881,Kumla,18,Örebro län,153,13054,22665,57.6
 1882,Askersund,18,Örebro län,10,488,11382,4.3
-1883,Karlskoga,18,Örebro län,394,32842,30128,109.0
+1883,Karlskoga,18,Örebro län,393,32704,30128,108.6
 1884,Nora,18,Örebro län,71,5811,10603,54.8
 1885,Lindesberg,18,Örebro län,137,12347,23014,53.6
 1904,Skinnskatteberg,19,Västmanlands län,5,377,4234,8.9
@@ -215,7 +215,7 @@ kommun_code,kommun,lan_code,lan,shelters,places,population_2025,places_per_100_i
 1960,Kungsör,19,Västmanlands län,60,5382,8550,62.9
 1961,Hallstahammar,19,Västmanlands län,146,13776,16600,83.0
 1962,Norberg,19,Västmanlands län,1,45,5351,0.8
-1980,Västerås,19,Västmanlands län,1162,132884,161240,82.4
+1980,Västerås,19,Västmanlands län,1163,133052,161240,82.5
 1981,Sala,19,Västmanlands län,168,16155,22600,71.5
 1982,Fagersta,19,Västmanlands län,183,16266,12915,125.9
 1983,Köping,19,Västmanlands län,237,25669,25610,100.2
@@ -229,7 +229,7 @@ kommun_code,kommun,lan_code,lan,shelters,places,population_2025,places_per_100_i
 2039,Älvdalen,20,Dalarnas län,4,315,6831,4.6
 2061,Smedjebacken,20,Dalarnas län,54,4818,10758,44.8
 2062,Mora,20,Dalarnas län,135,13988,20419,68.5
-2080,Falun,20,Dalarnas län,413,44490,59974,74.2
+2080,Falun,20,Dalarnas län,411,44325,59974,73.9
 2081,Borlänge,20,Dalarnas län,438,46104,51354,89.8
 2082,Säter,20,Dalarnas län,9,561,11222,5.0
 2083,Hedemora,20,Dalarnas län,105,8571,15025,57.0
@@ -240,7 +240,7 @@ kommun_code,kommun,lan_code,lan,shelters,places,population_2025,places_per_100_i
 2121,Ovanåker,21,Gävleborgs län,6,392,11272,3.5
 2132,Nordanstig,21,Gävleborgs län,0,0,9284,0.0
 2161,Ljusdal,21,Gävleborgs län,109,11036,18377,60.1
-2180,Gävle,21,Gävleborgs län,710,77906,104108,74.8
+2180,Gävle,21,Gävleborgs län,711,78106,104108,75.0
 2181,Sandviken,21,Gävleborgs län,388,35460,38033,93.2
 2182,Söderhamn,21,Gävleborgs län,237,22027,24163,91.2
 2183,Bollnäs,21,Gävleborgs län,193,20627,26018,79.3
@@ -248,7 +248,7 @@ kommun_code,kommun,lan_code,lan,shelters,places,population_2025,places_per_100_i
 2260,Ånge,22,Västernorrlands län,66,5845,9000,64.9
 2262,Timrå,22,Västernorrlands län,148,14193,17465,81.3
 2280,Härnösand,22,Västernorrlands län,266,24581,24348,101.0
-2281,Sundsvall,22,Västernorrlands län,881,95385,98962,96.4
+2281,Sundsvall,22,Västernorrlands län,880,95265,98962,96.3
 2282,Kramfors,22,Västernorrlands län,106,10318,17390,59.3
 2283,Sollefteå,22,Västernorrlands län,186,15281,18138,84.2
 2284,Örnsköldsvik,22,Västernorrlands län,408,37383,55338,67.6
@@ -272,9 +272,9 @@ kommun_code,kommun,lan_code,lan,shelters,places,population_2025,places_per_100_i
 2460,Vännäs,24,Västerbottens län,67,4988,9225,54.1
 2462,Vilhelmina,24,Västerbottens län,0,0,6172,0.0
 2463,Åsele,24,Västerbottens län,0,0,2683,0.0
-2480,Umeå,24,Västerbottens län,1065,103192,135273,76.3
+2480,Umeå,24,Västerbottens län,1062,102065,135273,75.5
 2481,Lycksele,24,Västerbottens län,124,10990,12159,90.4
-2482,Skellefteå,24,Västerbottens län,460,43364,75405,57.5
+2482,Skellefteå,24,Västerbottens län,459,43330,75405,57.5
 2505,Arvidsjaur,25,Norrbottens län,53,4733,6026,78.5
 2506,Arjeplog,25,Norrbottens län,8,464,2570,18.1
 2510,Jokkmokk,25,Norrbottens län,6,249,4695,5.3
@@ -284,7 +284,7 @@ kommun_code,kommun,lan_code,lan,shelters,places,population_2025,places_per_100_i
 2521,Pajala,25,Norrbottens län,14,1145,5706,20.1
 2523,Gällivare,25,Norrbottens län,142,12978,17135,75.7
 2560,Älvsbyn,25,Norrbottens län,62,5697,7815,72.9
-2580,Luleå,25,Norrbottens län,680,73133,80304,91.1
+2580,Luleå,25,Norrbottens län,679,73102,80304,91.0
 2581,Piteå,25,Norrbottens län,227,22547,42184,53.4
 2582,Boden,25,Norrbottens län,298,25714,28624,89.8
 2583,Haparanda,25,Norrbottens län,82,6407,9027,71.0
