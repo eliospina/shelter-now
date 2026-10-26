@@ -2,7 +2,7 @@
 
 **Live app: [shelter-now-eta.vercel.app](https://shelter-now-eta.vercel.app)** · Built with Claude and Claude Code at Claude Build Day Stockholm, September 2026.
 
-**One tap shows the nearest of Sweden's 62,761 public shelters, how to get
+**One tap shows the nearest of Sweden's 62,739 public shelters, how to get
 there, and what to do, in your language.**
 
 Around 2 million people in Sweden were born abroad. Many have never heard the
@@ -18,7 +18,7 @@ should know what to do, whatever language they speak.
 ## What it does
 
 - 🔴 **One EMERGENCY button** uses your location to find the 3 nearest shelters.
-- 📴 **Works without internet (Android app):** all 62,761 shelters are inside the app and the nearest is found on the phone, with built-in instructions in every language. GPS needs no internet.
+- 📴 **Works without internet (Android app):** all 62,739 shelters are inside the app and the nearest is found on the phone, with built-in instructions in every language. GPS needs no internet.
 - 🧭 **A compass to the shelter:** an arrow, the live distance and the direction ("8.9 km · north"), from GPS and the phone's compass, for when maps won't load.
 - 🚶🚲🚗 **Walking, cycling or driving:** travel time and a Google Maps route for each mode.
 - ⚠️ **Take cover first when a shelter is too far.** If the nearest shelter is more than 5 minutes away (about 400 m on foot), the app tells you to go to a basement or the middle of the building, and shows the shelter only as a second option.
@@ -33,29 +33,29 @@ should know what to do, whatever language they speak.
 ## What the data shows
 
 <p align="center">
-  <img src="docs/sweden-drawn-by-its-shelters.png" width="420" alt="A dark map of Sweden made only of 62,761 golden dots, one per shelter. Stockholm glows like a galaxy, Gothenburg and Malmö are smaller bright clusters, and in the north a thin string of towns follows the coast of the Gulf of Bothnia.">
+  <img src="docs/sweden-drawn-by-its-shelters.png" width="420" alt="A dark map of Sweden made only of 62,739 golden dots, one per shelter. Stockholm glows like a galaxy, Gothenburg and Malmö are smaller bright clusters, and in the north a thin string of towns follows the coast of the Gulf of Bothnia.">
 </p>
 
 **Sweden, drawn by its shelters.** No map outline, no roads: one dot for each
-of the 62,761 shelters, sized by its number of places. The country appears on its
+of the 62,739 shelters, sized by its number of places. The country appears on its
 own, like a night photograph from space. Stockholm glows like a galaxy,
 Gothenburg and Malmö are smaller suns, and in the north a string of towns
 follows the coast of the Gulf of Bothnia into the dark. Every dot is a place
 someone prepared in case it was ever needed. Seen from afar, it looks like a
 map of care.
 
-Sweden has **62,761 shelters with 6.7 million places**, about 63 for every
+Sweden has **62,739 shelters with 6.7 million places**, about 63 for every
 100 residents. I matched every shelter to its municipality and to SCB's 2025
 population figures.
 
-![Shelter places per 100 residents for all 290 Swedish municipalities, ranked. Stockholm (65.7) and Södertälje (90.5) are highlighted; the Sweden average is 63.0; 18 municipalities have no shelters.](docs/shelters-per-100-residents.png)
+![Shelter places per 100 residents for all 290 Swedish municipalities, ranked. Stockholm (65.7) and Södertälje (90.5) are highlighted; the Sweden average is 62.9; 18 municipalities have no shelters.](docs/shelters-per-100-residents.png)
 
 | Area | Shelters | Places | Population (2025) | Places per 100 residents |
 |---|---:|---:|---:|---:|
-| Stockholms kommun | 6,430 | 656,857 | 999,239 | 65.7 |
-| Stockholms län | 13,817 | 1,604,876 | 2,486,251 | 64.6 |
+| Stockholms kommun | 6,427 | 656,415 | 999,239 | 65.7 |
+| Stockholms län | 13,813 | 1,604,192 | 2,486,251 | 64.5 |
 | Södertälje kommun | 779 | 93,010 | 102,772 | 90.5 |
-| Sverige | 62,761 | 6,678,979 | 10,605,529 | 63.0 |
+| Sverige | 62,739 | 6,675,849 | 10,605,529 | 62.9 |
 
 - **Highest:** Olofström, with 141.9 places per 100 residents.
 - **18 of 290 municipalities have no shelters at all**, among them Orust,
@@ -91,8 +91,19 @@ The full table for all 290 municipalities is in
 **Shelters.** Official data from **Myndigheten för civilt försvar**
 (Skyddsrum), converted from the source shapefile (SWEREF 99 TM / EPSG:3006)
 to WGS84 GeoJSON, keeping only `id`, `address`, `places`, `lat` and `lon`.
-633 records marked `Tillfällig begränsning` (temporarily restricted) are left
-out; `data/stats.json` has the full breakdown.
+The open shapefile lags behind MCF's register, so on 26 October 2026 MCF sent
+its list of active shelters on request; only shelters on that list are kept
+(`data/mcf_register.json`, made with `scripts/import_mcf_register.py`). This
+left out 655 records that are temporarily restricted or no longer active. 23
+active shelters are not yet in the shapefile, so they have no position and
+are not shown. `data/stats.json` has the full breakdown.
+
+**Year of first inspection.** The open data has no construction year. MCF's
+list gives each shelter's first inspection date (*nybesiktning*), when it was
+approved as finished, for 40,930 of 62,762 active shelters; for older
+shelters often only the year is recorded. It is kept in
+`data/mcf_register.json` and shows two building waves, in the 1960s and the
+1980s.
 
 **Municipalities.** The shelter data has no municipality field, so
 `scripts/shelters_by_municipality.py` places each shelter using
@@ -105,7 +116,7 @@ whose code it starts with. Only 37 of Stockholms kommun's shelters lie within
 
 **Street addresses.** Each shelter is matched to the nearest address point in
 Lantmäteriet's *Belägenhetsadress Nedladdning, vektor* (decision LM2026/147116),
-within 100 m: 61,992 of 62,761 shelters, median distance 8 m. Lantmäteriet's
+within 100 m: 61,961 of 62,739 shelters, median distance 8 m. Lantmäteriet's
 raw files may only be stored on the applicant's own computer and are deleted
 after matching, so the matching script lives outside this repo; only the
 result, one address per shelter, is published in `data/shelter_streets.json`

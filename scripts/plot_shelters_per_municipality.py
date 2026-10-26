@@ -86,7 +86,7 @@ def main():
              fontweight="bold", color=INK, ha="left", va="top")
     fig.text(0.055, 0.905, "Public civil-defence shelters (skyddsrum) in Sweden. Stockholm and Södertälje highlighted.",
              fontsize=11, color=INK_2, ha="left", va="top")
-    fig.text(0.055, 0.025, "Sources: MCF shelter register (September 2026, temporarily restricted shelters excluded), "
+    fig.text(0.055, 0.025, "Sources: MCF shelter register (active shelters, October 2026), "
              "SCB population 31 Dec 2025, Lantmäteriet district boundaries.  github.com/eliospina/shelter-now",
              fontsize=8.5, color=MUTED, ha="left", va="bottom")
 
