@@ -5,7 +5,7 @@ Limits: app name 30, short description 80, full description 4000 characters.
 ## Svenska (sv-SE), default language
 
 ### App name
-Bunker Now: närmaste skyddsrum
+Bunker Now Sverige
 
 ### Short description
 Närmaste skyddsrum och vad du ska göra, på ditt språk. Fungerar utan internet.
@@ -40,24 +40,24 @@ Data: Myndigheten för civilt försvar. Bunker Now är ett oberoende projekt och
 ## English (en-US)
 
 ### App name
-Bunker Now: nearest shelter
+Bunker Now Sverige
 
 ### Short description
-Nearest shelter in Sweden and what to do, in your language. Works offline.
+Nearest bunker in Sweden and what to do, in your language. Works offline.
 
 ### Full description
-Bunker Now shows the nearest of Sweden's 62,739 public shelters (skyddsrum) with one tap, how to get there and what to do, in your language.
+Bunker Now shows the nearest of Sweden's 62,739 public bunkers (skyddsrum) with one tap, how to get there and what to do, in your language.
 
 Around 2 million people in Sweden were born abroad. Many have never heard the word skyddsrum and don't know what the alarms mean. In a crisis, everyone should know what to do, whatever language they speak.
 
 WORKS WITHOUT INTERNET
-Every shelter is inside the app and your phone finds the nearest one itself. GPS needs no internet. Instructions are built in for every language.
+Every bunker is inside the app and your phone finds the nearest one itself. GPS needs no internet. Instructions are built in for every language.
 
 WHAT IT DOES
-• One EMERGENCY button finds the 3 nearest shelters.
+• One EMERGENCY button finds the 3 nearest bunkers.
 • Walking, cycling or driving: travel time for each.
-• Take cover first: if the nearest shelter is more than 5 minutes away, the app tells you to go to a basement or the middle of the building.
-• A compass with an arrow, distance and direction to the shelter, for when maps won't load.
+• Take cover first: if the nearest bunker is more than 5 minutes away, the app tells you to go to a basement or the middle of the building.
+• A compass with an arrow, distance and direction to the bunker, for when maps won't load.
 • Calm, numbered instructions. When online, Claude (AI) writes them from official MCF and Krisinformation guidance.
 • The alarms explained: beredskapslarm and flyglarm.
 • What to bring and what to leave.
@@ -65,7 +65,7 @@ WHAT IT DOES
 • 7 languages: Swedish, English, Spanish, Arabic, Persian, Ukrainian and Somali.
 
 HONEST ABOUT THE DATA
-Shelters open within 48 hours after the government declares heightened alert. The register names each shelter by its property designation (for example "Hägern Större 16"), not a street address. The app says both.
+Bunkers open within 48 hours after the government declares heightened alert. The register names each bunker by its property designation (for example "Hägern Större 16"), not a street address. The app says both.
 
 PRIVACY
 No accounts, no ads, no tracking. Your location is used on your phone.
