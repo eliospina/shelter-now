@@ -70,6 +70,21 @@ const PATHS = {
     </>
   ),
   arrow: <path d="M5 12h14m-6-6 6 6-6 6" fill="none" />,
+  map: (
+    <>
+      <path d="M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6z" fill="none" />
+      <path d="M9 4v14M15 6v14" fill="none" />
+    </>
+  ),
+  eye: (
+    <>
+      <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" fill="none" />
+      <circle cx="12" cy="12" r="2.8" fill="none" />
+    </>
+  ),
+  down: <path d="M12 5v14m-6-6 6 6 6-6" fill="none" />,
+  play: <path d="M8 5.5v13l10.5-6.5z" />,
+  stop: <rect x="6.5" y="6.5" width="11" height="11" rx="1.5" />,
   shield: (
     <>
       <path d="M12 3.5 19 6v6c0 4.2-3 7.6-7 8.5-4-.9-7-4.3-7-8.5V6z" fill="none" />

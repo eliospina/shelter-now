@@ -11,8 +11,8 @@ export const viewport = {
   viewportFit: "cover",
   // Same as --bg in globals.css, so the status bar blends with the page.
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#eef1f5" },
-    { media: "(prefers-color-scheme: dark)", color: "#0c1526" },
+    { media: "(prefers-color-scheme: light)", color: "#f3efe7" },
+    { media: "(prefers-color-scheme: dark)", color: "#121110" },
   ],
 };
 
