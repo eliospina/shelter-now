@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Icon from "./icons";
 import { COMPASS } from "@/lib/i18n";
 import { bearingDegrees, compassPoint, formatDistance, haversineMeters } from "@/lib/geo";
 
@@ -94,20 +93,23 @@ export default function Compass({ lang, origin, follow, target }) {
 
   return (
     <div className="card compass">
-      <b>
-        <Icon name="compass" /> {c.title}
-      </b>
+      <h3>{c.title}</h3>
       <div className="compass-dial" aria-hidden="true">
-        {heading === null && <span className="compass-n">N</span>}
-        <svg className="compass-arrow" viewBox="0 0 100 100" style={{ transform: `rotate(${rotation}deg)` }}>
-          <path d="M50 8 L76 84 L50 68 L24 84 Z" />
+        <span className="compass-n">N</span>
+        <span className="tick e" />
+        <span className="tick s" />
+        <span className="tick w" />
+        <svg className="compass-needle" viewBox="0 0 40 82" style={{ transform: `rotate(${rotation}deg)` }}>
+          <path d="M20 0 L38 76 L20 62 L2 76 Z" />
         </svg>
+        <span className="compass-hub" />
       </div>
       <p className="compass-reading">
-        <span dir="ltr">{formatDistance(distance)}</span> · {c.dirs[compassPoint(bearing)]}
+        <bdi dir="ltr">{formatDistance(distance)}</bdi>
       </p>
+      <p className="compass-dir">{c.dirs[compassPoint(bearing)]}</p>
       {needsPermission ? (
-        <button type="button" className="compass-enable" onClick={enableCompass}>
+        <button type="button" className="btn-outline" onClick={enableCompass}>
           {c.enable}
         </button>
       ) : (
