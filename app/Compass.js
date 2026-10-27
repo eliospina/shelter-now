@@ -93,10 +93,7 @@ export default function Compass({ lang, origin, follow, target }) {
 
   return (
     <div className="card compass">
-      <div className="card-head">
-        <h3>{c.title}</h3>
-        <span className="badge calm">{c.offline}</span>
-      </div>
+      <h3>{c.offline}</h3>
       <div className="compass-dial" aria-hidden="true">
         <span className="compass-n">N</span>
         <span className="tick e" />
