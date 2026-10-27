@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Compass from "./Compass";
+import AlarmPlayer from "./AlarmPlayer";
 import Icon, { BrandMark } from "./icons";
-import { LANGS, LANG_CODES, DEFAULT_LANG, UI, PACK, FAMILY_MESSAGE, ASK, offlineSteps, isRtl, placeName } from "@/lib/i18n";
+import { LANGS, LANG_CODES, DEFAULT_LANG, UI, PACK, FAMILY_MESSAGE, ASK, ALARM_SOUND, offlineSteps, isRtl, placeName } from "@/lib/i18n";
 import { TRAVEL_MODES, DEFAULT_MODE, FAR_THRESHOLD_MIN, tripContext, travelMinutes, googleMapsRoute, nearestShelters, formatCoords } from "@/lib/geo";
 
 // The Android app has no server of its own (see scripts/build-app.mjs): it
@@ -96,6 +97,7 @@ export default function Home() {
   const [question, setQuestion] = useState("");
   const [asking, setAsking] = useState(false);
   const [qa, setQa] = useState([]); // [{ question, answer, grounded }]
+  const [playingAlarm, setPlayingAlarm] = useState(null); // index into t.alarms, or null
 
   useEffect(() => {
     let saved = null;
@@ -388,14 +390,24 @@ export default function Home() {
           <Icon name="sound" /> {t.alarmsTitle}
         </b>
         <dl className="alarms">
-          {t.alarms.map((a) => (
+          {t.alarms.map((a, i) => (
             <div key={a.name}>
               <dt>{a.name}</dt>
               <dd className="pattern">{a.pattern}</dd>
               <dd className="action">→ {a.action}</dd>
+              <dd>
+                <AlarmPlayer
+                  index={i}
+                  s={ALARM_SOUND[lang]}
+                  playing={playingAlarm === i}
+                  onPlay={() => setPlayingAlarm(i)}
+                  onStop={() => setPlayingAlarm(null)}
+                />
+              </dd>
             </div>
           ))}
         </dl>
+        <p className="note">{ALARM_SOUND[lang].note}</p>
       </div>
 
       <div className="card">
