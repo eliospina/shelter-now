@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1290 960">
+  <rect width="1290" height="960" fill="#2b2b2b"/>
+  <image x="30" y="30" width="390" height="844" xlink:href="A-dia-sueco.png"/>
+  <image x="450" y="30" width="390" height="844" xlink:href="B-noche-nordica.png"/>
+  <image x="870" y="30" width="390" height="844" xlink:href="C-pastel-nordico.png"/>
+  <g font-family="Helvetica, Arial" font-size="30" fill="#fff" text-anchor="middle">
+    <text x="225" y="925">A · Día sueco</text><text x="645" y="925">B · Noche nórdica</text><text x="1065" y="925">C · Pastel nórdico</text>
+  </g>
+</svg>

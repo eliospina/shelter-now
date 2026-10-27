@@ -159,3 +159,4 @@ data/raw/
 # Android app build (scripts/build-app.mjs)
 public/shelters.json
 .api-stash
+.DS_Store

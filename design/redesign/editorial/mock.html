@@ -1,0 +1,79 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f4ef;--card:#fbfaf6;--fg:#1b1a17;--mute:#6b675e;--line:#dcd8ce;--blue:#2c5778;--gold:#d9a92e;--sos:#a8392b}
+.dark{--bg:#141412;--card:#1c1b18;--fg:#eeebe4;--mute:#9a958a;--line:#2e2c28;--blue:#8fb4d3;--gold:#e2b84a;--sos:#c4523f}
+*{box-sizing:border-box;margin:0}
+body{display:flex;gap:28px;padding:28px;background:#d9d6cf;font-family:Geist,system-ui,sans-serif}
+.phone{width:390px;height:844px;border-radius:44px;overflow:hidden;background:var(--bg);color:var(--fg);padding:58px 26px 26px;position:relative}
+.brand{display:flex;align-items:center;gap:10px}
+.brand svg{width:30px;height:30px}
+.brand b{font-family:Newsreader,serif;font-weight:500;font-size:22px;letter-spacing:-.01em}
+.kicker{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+h1{font-family:Newsreader,serif;font-weight:400;font-size:34px;line-height:1.08;letter-spacing:-.02em;margin:26px 0 10px}
+h1 i{color:var(--blue)}
+.lead{color:var(--mute);font-size:15px;line-height:1.5}
+.row{display:flex;gap:8px;margin-top:22px}
+.chip{flex:1;border:1px solid var(--line);border-radius:999px;padding:10px 0;text-align:center;font-size:14px;font-weight:500}
+.chip.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.select{margin-top:10px;border-bottom:1px solid var(--line);padding:12px 0;display:flex;justify-content:space-between;font-size:15px}
+.sos{margin-top:26px;background:var(--sos);color:#fff;border-radius:22px;padding:26px 22px;display:flex;justify-content:space-between;align-items:center}
+.sos b{font-size:24px;font-weight:600;letter-spacing:.04em}
+.sos span{display:block;font-size:13px;opacity:.85;margin-top:4px;font-weight:400;letter-spacing:0}
+.sos .arrow{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:22px}
+.note{margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;line-height:1.5;color:var(--mute)}
+.note b{color:var(--fg);font-weight:500}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-top:14px}
+.street{font-family:Newsreader,serif;font-size:27px;line-height:1.1;letter-spacing:-.015em;margin:8px 0 4px}
+.prop{font-size:13px;color:var(--mute)}
+.meta{display:flex;gap:18px;margin-top:14px;font-family:'Geist Mono',monospace;font-size:12px;color:var(--mute)}
+.meta b{display:block;font-family:Geist;font-size:18px;color:var(--fg);font-weight:500}
+.route{margin-top:16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:14px;font-weight:500;color:var(--blue)}
+.compass{display:flex;align-items:center;gap:16px}
+.dial{width:78px;height:78px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center}
+.dial svg{width:44px;height:44px;transform:rotate(-24deg)}
+.steps{counter-reset:s;list-style:none;padding:0;margin-top:8px}
+.steps li{counter-increment:s;display:flex;gap:12px;font-size:14px;line-height:1.45;padding:8px 0;border-top:1px solid var(--line)}
+.steps li:first-child{border-top:0}
+.steps li::before{content:counter(s);font-family:Newsreader,serif;font-size:20px;color:var(--gold);min-width:16px;line-height:1}
+</style></head><body>
+<!-- Inicio, claro -->
+<div class="phone">
+  <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="120" fill="#2c5778"/><g transform="translate(256 262) scale(.78) translate(-256 -257)"><path d="M104 400 V266 A152 152 0 0 1 408 266 V400 Z" fill="#d9a92e"/><path d="M176 400 V278 A80 80 0 0 1 336 278 V400 Z" fill="#2c5778"/><path d="M256 222 V334 M216 296 L256 336 L296 296" fill="none" stroke="#fbfaf6" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/></g></svg><b>Bunker Now</b></div>
+  <h1>Tu refugio más cercano, <i>y qué hacer</i>.</h1>
+  <p class="lead">En tu idioma. Funciona sin internet.</p>
+  <div class="select"><span>Español</span><span class="kicker">Idioma ▾</span></div>
+  <div class="row"><div class="chip on">A pie</div><div class="chip">Bici</div><div class="chip">Coche</div></div>
+  <div class="sos"><div><b>EMERGENCIA</b><span>Refugio, ruta y pasos en un toque</span></div><div class="arrow">→</div></div>
+  <p class="note"><b>Antes de la alerta</b> los refugios pueden estar cerrados: abren en 48 h. Si suena la alarma antes, ve a un sótano o al centro del edificio.</p>
+  <p class="note"><span class="kicker">Alarmas</span><br><b>Beredskapslarm</b> — entra y escucha P4.<br><b>Flyglarm</b> — protégete de inmediato.</p>
+</div>
+<!-- Resultado, claro -->
+<div class="phone">
+  <span class="kicker">Refugio más cercano · 120 m</span>
+  <div class="card">
+    <div class="street">Mäster Samuelsgatan 70</div>
+    <div class="prop">Stockholm · Inmueble Blåmannen 21</div>
+    <div class="meta"><div><b>120 m</b>distancia</div><div><b>2 min</b>a pie</div><div><b>83</b>plazas</div></div>
+    <div class="route"><span>Abrir ruta</span><span>→</span></div>
+  </div>
+  <div class="card compass"><div class="dial"><svg viewBox="0 0 100 100"><path d="M50 8 L76 84 L50 68 L24 84 Z" fill="#2c5778"/></svg></div><div><span class="kicker">Dirección</span><div class="street" style="font-size:22px">120 m · norte</div><div class="prop">Sostén el móvil en horizontal.</div></div></div>
+  <div class="card"><span class="kicker">Qué hacer</span>
+    <ol class="steps"><li>Mantén la calma. Ve ahora al refugio: Mäster Samuelsgatan 70, 2 min a pie.</li><li>Lleva teléfono, cargador, agua y comida para 3 días, medicinas y documento.</li><li>Si está cerrado, ve a un sótano o al centro del edificio.</li></ol>
+  </div>
+</div>
+<!-- Resultado, oscuro -->
+<div class="phone dark">
+  <span class="kicker">Refugio más cercano · 120 m</span>
+  <div class="card">
+    <div class="street">Mäster Samuelsgatan 70</div>
+    <div class="prop">Stockholm · Inmueble Blåmannen 21</div>
+    <div class="meta"><div><b>120 m</b>distancia</div><div><b>2 min</b>a pie</div><div><b>83</b>plazas</div></div>
+    <div class="route"><span>Abrir ruta</span><span>→</span></div>
+  </div>
+  <div class="card compass"><div class="dial"><svg viewBox="0 0 100 100"><path d="M50 8 L76 84 L50 68 L24 84 Z" fill="#8fb4d3"/></svg></div><div><span class="kicker">Dirección</span><div class="street" style="font-size:22px">120 m · norte</div><div class="prop">Sostén el móvil en horizontal.</div></div></div>
+  <div class="card"><span class="kicker">Qué hacer</span>
+    <ol class="steps"><li>Mantén la calma. Ve ahora al refugio: Mäster Samuelsgatan 70, 2 min a pie.</li><li>Lleva teléfono, cargador, agua y comida para 3 días, medicinas y documento.</li><li>Si está cerrado, ve a un sótano o al centro del edificio.</li></ol>
+  </div>
+</div>
+</body></html>

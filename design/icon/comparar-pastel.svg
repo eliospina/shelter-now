@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 520">
+  <rect width="1200" height="520" fill="#2b2b2b"/>
+  <defs><clipPath id="m"><rect width="320" height="320" rx="80"/></clipPath></defs>
+  <g transform="translate(60,60)"><g clip-path="url(#m)"><image width="320" height="320" xlink:href="d-escudo-pastel.png"/></g></g>
+  <g transform="translate(440,60)"><g clip-path="url(#m)"><image width="320" height="320" xlink:href="e-puerta-pastel.png"/></g></g>
+  <g transform="translate(820,60)"><g clip-path="url(#m)"><image width="320" height="320" xlink:href="f-trebol-pastel.png"/></g></g>
+  <g font-family="Helvetica, Arial" font-size="34" fill="#fff" text-anchor="middle">
+    <text x="220" y="440">D · Escudo pastel</text><text x="600" y="440">E · Puerta pastel</text><text x="980" y="440">F · Trébol pastel</text>
+  </g>
+</svg>

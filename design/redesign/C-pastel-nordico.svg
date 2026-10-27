@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" width="390" height="844" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <rect width="390" height="844" rx="44" fill="#e8f0f6"/>
+  <rect x="0" y="0" width="390" height="190" rx="44" fill="#e8f0f6"/>
+  <rect x="0" y="140" width="390" height="50" fill="#e8f0f6"/>
+  <g transform="translate(46 98) scale(0.16) translate(-256 -257)">
+    <path d="M104 400 V266 A152 152 0 0 1 408 266 V400 Z" fill="#f5c84c"/>
+    <path d="M176 400 V278 A80 80 0 0 1 336 278 V400 Z" fill="#5b8db8"/>
+    <path d="M256 222 V334 M216 296 L256 336 L296 296" fill="none" stroke="#ffffff" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="84" y="108" font-size="30" font-weight="700" fill="#1f3047">Bunker Now</text>
+  <text x="24" y="150" font-size="15" fill="#1f3047" opacity="0.85">Tu refugio más cercano y qué hacer,</text>
+  <text x="24" y="170" font-size="15" fill="#1f3047" opacity="0.85">en tu idioma. Funciona sin internet.</text>
+  <rect x="24" y="214" width="342" height="48" rx="14" fill="#ffffff" stroke="#d3dfe9"/>
+  <text x="44" y="244" font-size="16" fill="#1f3047">🌍  Español</text><text x="340" y="244" font-size="14" fill="#62728a">▾</text>
+  <g font-size="15" font-weight="600">
+    <rect x="24" y="276" width="106" height="46" rx="23" fill="#5b8db8"/><text x="77" y="305" text-anchor="middle" fill="#ffffff">🚶 A pie</text>
+    <rect x="142" y="276" width="106" height="46" rx="23" fill="#ffffff" stroke="#d3dfe9"/><text x="195" y="305" text-anchor="middle" fill="#1f3047">🚲 Bici</text>
+    <rect x="260" y="276" width="106" height="46" rx="23" fill="#ffffff" stroke="#d3dfe9"/><text x="313" y="305" text-anchor="middle" fill="#1f3047">🚗 Coche</text>
+  </g>
+  <rect x="24" y="346" width="342" height="150" rx="32" fill="#e5735d"/>
+  <text x="195" y="418" text-anchor="middle" font-size="34" font-weight="800" letter-spacing="1.5" fill="#ffffff">EMERGENCIA</text>
+  <text x="195" y="452" text-anchor="middle" font-size="14" fill="#ffffff" opacity="0.85">Un toque: refugio, ruta y pasos</text>
+  <rect x="24" y="520" width="342" height="96" rx="20" fill="#ffffff" stroke="#d3dfe9"/>
+  <circle cx="52" cy="552" r="12" fill="#5b8db8"/><text x="52" y="557" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">i</text>
+  <text x="74" y="557" font-size="14" fill="#1f3047">Los refugios abren en 48 h cuando hay</text>
+  <text x="74" y="577" font-size="14" fill="#1f3047">alerta elevada. Antes: ve a un sótano</text>
+  <text x="74" y="597" font-size="14" fill="#1f3047">o al centro del edificio.</text>
+  <rect x="24" y="632" width="342" height="150" rx="20" fill="#ffffff" stroke="#d3dfe9"/>
+  <text x="44" y="664" font-size="16" font-weight="700" fill="#1f3047">🔊 Conoce las alarmas</text>
+  <text x="44" y="694" font-size="14" font-weight="600" fill="#1f3047">Beredskapslarm</text>
+  <text x="44" y="714" font-size="13" fill="#62728a">→ Entra y escucha Sveriges Radio P4</text>
+  <text x="44" y="742" font-size="14" font-weight="600" fill="#1f3047">Flyglarm</text>
+  <text x="44" y="762" font-size="13" fill="#62728a">→ Protégete de inmediato</text>
+</svg>
