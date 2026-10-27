@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Compass from "./Compass";
 import AlarmPlayer from "./AlarmPlayer";
-import Icon, { BrandMark } from "./icons";
+import Icon, { BrandMark, SkyddsrumSign } from "./icons";
 import { LANGS, LANG_CODES, DEFAULT_LANG, UI, PACK, FAMILY_MESSAGE, ASK, ALARM_SOUND, offlineSteps, isRtl, placeName } from "@/lib/i18n";
 import { TRAVEL_MODES, DEFAULT_MODE, FAR_THRESHOLD_MIN, tripContext, travelMinutes, googleMapsRoute, nearestShelters, formatCoords } from "@/lib/geo";
 
@@ -63,6 +63,16 @@ async function findShelters(pos) {
   return (await res.json()).shelters;
 }
 
+// A link that opens the bunker in whatever map app the phone has. Offline map
+// apps (Organic Maps, OsmAnd, Google Maps with a downloaded area) show streets
+// and a route without internet. null where no such link exists (desktop).
+function mapAppLink(platform, shelter, label) {
+  const { lat, lon } = shelter;
+  if (platform === "android") return `geo:${lat},${lon}?q=${lat},${lon}(${encodeURIComponent(label)})`;
+  if (platform === "ios") return `maps://?q=${encodeURIComponent(label)}&ll=${lat},${lon}`;
+  return null;
+}
+
 // "Mäster Samuelsgatan 70, Stockholm" -> ["Mäster Samuelsgatan 70", "Stockholm"].
 function splitStreet(street) {
   const i = street.lastIndexOf(", ");
@@ -106,6 +116,7 @@ export default function Home() {
   const [asking, setAsking] = useState(false);
   const [qa, setQa] = useState([]); // [{ question, answer, grounded }]
   const [playingAlarm, setPlayingAlarm] = useState(null); // index into t.alarms, or null
+  const [platform, setPlatform] = useState(null); // "android" | "ios" | null, read after mount
 
   useEffect(() => {
     let saved = null;
@@ -119,6 +130,12 @@ export default function Home() {
     }
     const browserLang = (navigator.language || "").slice(0, 2).toLowerCase();
     if (LANG_CODES.includes(browserLang)) setLang(browserLang);
+  }, []);
+
+  useEffect(() => {
+    const ua = navigator.userAgent;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time platform check after mount
+    setPlatform(IS_APP || /Android/i.test(ua) ? "android" : /iPhone|iPad|iPod/i.test(ua) ? "ios" : null);
   }, []);
 
   // Parse the bundled shelters while the user reads, so the button is instant.
@@ -365,9 +382,25 @@ export default function Home() {
             <Icon name="pin" size={20} /> {t.mapsRoute}
           </a>
           <p className="note center">{t.mapsNote}</p>
+          {mapAppLink(platform, nearest, "Skyddsrum") && (
+            <>
+              <a className="btn-outline" href={mapAppLink(platform, nearest, "Skyddsrum")}>
+                <Icon name="map" size={20} /> {t.otherApp}
+              </a>
+              <p className="note center">{t.otherAppNote}</p>
+            </>
+          )}
         </div>
 
         <Compass key={nearest.id} lang={lang} origin={origin} follow={!origin.demo} target={nearest} />
+
+        <div className="card sign-card">
+          <SkyddsrumSign size={96} />
+          <div>
+            <h3>{t.signTitle}</h3>
+            <p>{t.signBody}</p>
+          </div>
+        </div>
 
         <div className="card">
           <div className="card-head">
@@ -515,6 +548,13 @@ export default function Home() {
           <bdi dir="ltr">48 h</bdi>
         </span>
         <p>{t.openNote}</p>
+      </div>
+
+      <div className="card prep">
+        <h3 className="title-icon">
+          <Icon name="map" /> {t.prepTitle}
+        </h3>
+        <p>{t.prepBody}</p>
       </div>
 
       <h2 className="section">

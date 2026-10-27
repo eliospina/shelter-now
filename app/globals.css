@@ -1103,6 +1103,33 @@ ol.steps li:first-child::before {
   color: var(--ink-2);
 }
 
+/* Preparation tip, skyddsrum sign */
+.prep p {
+  margin-top: 8px;
+  font-size: 17px;
+}
+
+.sign-card {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.sign {
+  flex: none;
+  border-radius: 6px;
+}
+
+.sign-card p {
+  margin-top: 6px;
+  font-size: 16px;
+  color: var(--ink-2);
+}
+
+.btn-outline .icon {
+  margin-inline-end: 8px;
+}
+
 /* Outside Sweden */
 .outside .shield {
   display: grid;

@@ -70,6 +70,12 @@ const PATHS = {
     </>
   ),
   arrow: <path d="M5 12h14m-6-6 6 6-6 6" fill="none" />,
+  map: (
+    <>
+      <path d="M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6z" fill="none" />
+      <path d="M9 4v14M15 6v14" fill="none" />
+    </>
+  ),
   down: <path d="M12 5v14m-6-6 6 6 6-6" fill="none" />,
   play: <path d="M8 5.5v13l10.5-6.5z" />,
   stop: <rect x="6.5" y="6.5" width="11" height="11" rx="1.5" />,
@@ -90,6 +96,20 @@ export function BrandMark({ size = 46 }) {
       <path d="M104 400 V266 A152 152 0 0 1 408 266 V400 Z" fill="#fecc02" />
       <path d="M176 400 V278 A80 80 0 0 1 336 278 V400 Z" fill="#0b5c96" />
       <path d="M256 222 V334 M216 296 L256 336 L296 296" fill="none" stroke="#fdf6ec" strokeWidth="28" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+// The Swedish skyddsrum sign: the international civil defence emblem, a blue
+// triangle on orange, with the word SKYDDSRUM. Drawn here so it works offline.
+export function SkyddsrumSign({ size = 120 }) {
+  return (
+    <svg className="sign" width={size} height={size} viewBox="0 0 120 120" role="img" aria-label="SKYDDSRUM">
+      <rect width="120" height="120" rx="6" fill="#f08a00" />
+      <path d="M60 14 L100 82 H20 Z" fill="#1f4ea1" />
+      <text x="60" y="106" textAnchor="middle" fontFamily="IBM Plex Sans, sans-serif" fontWeight="700" fontSize="15" letterSpacing="0.5" fill="#1a1814">
+        SKYDDSRUM
+      </text>
     </svg>
   );
 }
