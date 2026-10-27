@@ -48,7 +48,7 @@ function project(points, size, pad) {
 
 // The path walked so far, the start, where you are now and the bunker.
 // No streets: there is no map without internet.
-function Trail({ trail, pos, target, c }) {
+function Trail({ trail, pos, target, c, distance }) {
   const size = 260;
   const pts = project([...trail, pos, target], size, 40);
   const path = pts.slice(0, trail.length + 1);
@@ -75,7 +75,11 @@ function Trail({ trail, pos, target, c }) {
           {c.you}
         </text>
       </svg>
-      <p className="note">{c.trailNote}</p>
+      <p className="trail-left">
+        {c.trailNote.split("{d}")[0]}
+        <bdi dir="ltr">{formatDistance(distance)}</bdi>
+        {c.trailNote.split("{d}")[1]}
+      </p>
     </div>
   );
 }
@@ -245,7 +249,7 @@ export default function Compass({ lang, origin, follow, target, signText }) {
         <p className="note">{noSensor && heading === null ? c.noSensor : c.hint}</p>
       )}
     </div>
-    {follow && <Trail trail={trail} pos={pos} target={target} c={c} />}
+    {follow && <Trail trail={trail} pos={pos} target={target} c={c} distance={distance} />}
     </>
   );
 }

@@ -970,6 +970,18 @@ h1 {
   direction: ltr;
 }
 
+.trail-left {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.trail-left bdi {
+  font-family: var(--mono);
+  font-weight: 500;
+}
+
 .trail-bg {
   fill: var(--surface-2);
 }
