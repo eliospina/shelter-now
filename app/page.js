@@ -392,7 +392,7 @@ export default function Home() {
           )}
         </div>
 
-        <Compass key={nearest.id} lang={lang} origin={origin} follow={!origin.demo} target={nearest} />
+        <Compass key={nearest.id} lang={lang} origin={origin} follow={!origin.demo} target={nearest} signText={t.signBody} />
 
         {/* Described in words only: the civil defence emblem is protected, so the
             drawing waits until MCF confirms it may be shown. */}
