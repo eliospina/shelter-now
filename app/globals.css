@@ -821,8 +821,12 @@ h1 {
   text-align: center;
 }
 
-.compass h3 {
+.compass .card-head {
   text-align: start;
+}
+
+.note.center {
+  text-align: center;
 }
 
 .compass-dial {

@@ -362,8 +362,9 @@ export default function Home() {
             )}
           </div>
           <a className={`route ${trip.far ? "ink" : ""}`} href={googleMapsRoute(nearest.lat, nearest.lon, mode)} target="_blank" rel="noopener noreferrer">
-            <Icon name="pin" size={20} /> {t.route}
+            <Icon name="pin" size={20} /> {t.mapsRoute}
           </a>
+          <p className="note center">{t.mapsNote}</p>
         </div>
 
         <Compass key={nearest.id} lang={lang} origin={origin} follow={!origin.demo} target={nearest} />
