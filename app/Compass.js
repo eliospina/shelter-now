@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Icon from "./icons";
 import { COMPASS } from "@/lib/i18n";
 import { bearingDegrees, compassPoint, formatDistance, haversineMeters } from "@/lib/geo";
 
@@ -93,7 +94,9 @@ export default function Compass({ lang, origin, follow, target }) {
 
   return (
     <div className="card compass">
-      <b>🧭 {c.title}</b>
+      <b>
+        <Icon name="compass" /> {c.title}
+      </b>
       <div className="compass-dial" aria-hidden="true">
         {heading === null && <span className="compass-n">N</span>}
         <svg className="compass-arrow" viewBox="0 0 100 100" style={{ transform: `rotate(${rotation}deg)` }}>
@@ -101,7 +104,7 @@ export default function Compass({ lang, origin, follow, target }) {
         </svg>
       </div>
       <p className="compass-reading">
-        {formatDistance(distance)} · {c.dirs[compassPoint(bearing)]}
+        <span dir="ltr">{formatDistance(distance)}</span> · {c.dirs[compassPoint(bearing)]}
       </p>
       {needsPermission ? (
         <button type="button" className="compass-enable" onClick={enableCompass}>
