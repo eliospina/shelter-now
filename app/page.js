@@ -554,7 +554,14 @@ export default function Home() {
         <h3 className="title-icon">
           <Icon name="map" /> {t.prepTitle}
         </h3>
-        <p>{t.prepBody}</p>
+        <ol className="abc">
+          {t.prepSteps.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
+        </ol>
+        <p className="prep-done">
+          <Icon name="check" size={20} /> {t.prepDone}
+        </p>
       </div>
 
       <h2 className="section">

@@ -1104,9 +1104,51 @@ ol.steps li:first-child::before {
 }
 
 /* Preparation tip, skyddsrum sign */
-.prep p {
-  margin-top: 8px;
+ol.abc {
+  list-style: none;
+  counter-reset: abc;
+  margin: 12px 0 0;
+  padding: 0;
+}
+
+ol.abc li {
+  counter-increment: abc;
+  position: relative;
+  padding: 10px 0;
+  padding-inline-start: 46px;
+  min-height: 52px;
+  border-top: 1.5px solid var(--line);
   font-size: 17px;
+}
+
+ol.abc li::before {
+  content: counter(abc);
+  position: absolute;
+  inset-inline-start: 0;
+  top: 9px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bunker);
+  color: var(--bunker-yellow);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.prep-done {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding-top: 12px;
+  border-top: 1.5px solid var(--line);
+  color: var(--calm);
+  font-weight: 600;
+}
+
+.prep-done .icon {
+  margin-top: 2px;
 }
 
 .sign-card {
