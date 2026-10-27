@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Compass from "./Compass";
 import AlarmPlayer from "./AlarmPlayer";
-import Icon, { BrandMark, SkyddsrumSign } from "./icons";
+import Icon, { BrandMark } from "./icons";
 import { LANGS, LANG_CODES, DEFAULT_LANG, UI, PACK, FAMILY_MESSAGE, ASK, ALARM_SOUND, offlineSteps, isRtl, placeName } from "@/lib/i18n";
 import { TRAVEL_MODES, DEFAULT_MODE, FAR_THRESHOLD_MIN, tripContext, travelMinutes, googleMapsRoute, nearestShelters, formatCoords } from "@/lib/geo";
 
@@ -394,12 +394,13 @@ export default function Home() {
 
         <Compass key={nearest.id} lang={lang} origin={origin} follow={!origin.demo} target={nearest} />
 
+        {/* Described in words only: the civil defence emblem is protected, so the
+            drawing waits until MCF confirms it may be shown. */}
         <div className="card sign-card">
-          <SkyddsrumSign size={96} />
-          <div>
-            <h3>{t.signTitle}</h3>
-            <p>{t.signBody}</p>
-          </div>
+          <h3 className="title-icon">
+            <Icon name="eye" /> {t.signTitle}
+          </h3>
+          <p>{t.signBody}</p>
         </div>
 
         <div className="card">

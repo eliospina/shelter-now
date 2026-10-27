@@ -1151,21 +1151,9 @@ ol.abc li::before {
   margin-top: 2px;
 }
 
-.sign-card {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-}
-
-.sign {
-  flex: none;
-  border-radius: 6px;
-}
-
 .sign-card p {
-  margin-top: 6px;
-  font-size: 16px;
-  color: var(--ink-2);
+  margin-top: 8px;
+  font-size: 17px;
 }
 
 .btn-outline .icon {
