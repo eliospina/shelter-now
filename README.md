@@ -9,11 +9,13 @@ Around 2 million people in Sweden were born abroad. Many have never heard the
 word *skyddsrum* and don't know what the alarms mean. In a crisis, everyone
 should know what to do, whatever language they speak.
 
-<p align="center">
-  <img src="docs/app-english.png" width="300" alt="Bunker Now in English: the nearest shelter is 150 m away, a 2 minute walk, with a Route button and five calm steps.">
-  &nbsp;&nbsp;
-  <img src="docs/app-arabic-far.png" width="300" alt="Bunker Now in Arabic, right to left: the nearest shelter is 6 minutes away by car, so the app first tells people to take cover where they are.">
-</p>
+<img width="643" height="624" alt="Screenshot 2026-10-29 at 14 07 48" src="https://github.com/user-attachments/assets/b5f89cf6-7601-41a1-ae92-9fc4f1410265" />
+
+<img width="577" height="620" alt="Screenshot 2026-10-29 at 14 08 49" src="https://github.com/user-attachments/assets/84dafa87-2938-45a8-9bbc-3d9ad1b82916" />
+
+<img width="638" height="623" alt="Screenshot 2026-10-29 at 14 09 35" src="https://github.com/user-attachments/assets/5c7f03d9-c910-4b86-91b1-c104662ca195" />
+
+
 
 ## What it does
 
